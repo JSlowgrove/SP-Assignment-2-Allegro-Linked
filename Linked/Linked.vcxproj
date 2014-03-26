@@ -61,23 +61,10 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="char.h" />
-    <ClInclude Include="hole.h" />
-    <ClInclude Include="menu.h" />
     <ClInclude Include="resource.h" />
-    <ClInclude Include="rock.h" />
-    <ClInclude Include="wall.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="batChar.cpp" />
-    <ClCompile Include="deathMenu.cpp" />
-    <ClCompile Include="InGameMenu.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="mainMenu.cpp" />
-    <ClCompile Include="playerChar.cpp" />
-    <ClCompile Include="rock1.cpp" />
-    <ClCompile Include="rock2.cpp" />
-    <ClCompile Include="wall.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
