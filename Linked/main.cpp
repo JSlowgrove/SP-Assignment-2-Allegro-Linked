@@ -71,14 +71,12 @@ int main(void)
 		a++;
 	}
 	a = 1;
-	for (int i = 53;i < 65; i++)
+	for (int i = 53;i < 66; i++)
 	{
 		girderPosition[i].x = 608;
 		girderPosition[i].y = (a*32);
 		a++;
 	}
-	girderPosition[65].x = 200;
-	girderPosition[65].y = 200;
 	while(!key[KEY_ESC])
 	{	
 		blit( ground,buffer, 0, 0, 0, 0, 640, 480 );
@@ -156,9 +154,9 @@ void respondToKeyboard()
 {
 	if(key[KEY_W])
 	{	
+		playerXY.y--;
 		if(girderCollision() == false)
 		{
-			playerXY.y--;
 		}
 		else
 		{
@@ -173,9 +171,9 @@ void respondToKeyboard()
 	}
 	if(key[KEY_S])
 	{
+		playerXY.y++;
 		if(girderCollision() == false)
 		{
-			playerXY.y++;
 		}
 		else
 		{
@@ -191,9 +189,9 @@ void respondToKeyboard()
 
 	if(key[KEY_A])
 	{
+		playerXY.x--;
 		if(girderCollision() == false)
 		{
-			playerXY.x--;
 		}
 		else
 		{
@@ -208,9 +206,9 @@ void respondToKeyboard()
 	}
 	if(key[KEY_D])
 	{
+		playerXY.x++;
 		if(girderCollision() == false)
 		{
-			playerXY.x++;
 		}
 		else
 		{
