@@ -22,11 +22,14 @@ BITMAP *buffer;//used for double buffering
 volatile position playerXY;
 volatile int playerAnimY;
 volatile int playerAnimX;
+volatile int pusherAnimY;
+volatile int pusherAnimX;
 volatile int bombAnimX;
 std::vector<position> girderPosition;
 std::vector<position> bombPosition;
 std::vector<position> originalPusherPosition;
 std::vector<position> pusherPosition;
+std::vector<position> holePosition;
 int pusherRange = 6;
 int numberOfPushers = 1;
 int	pusherDirection = 1;
@@ -45,6 +48,7 @@ int main(void)
 	bombPosition.resize(numberOfBombs);
 	pusherPosition.resize(numberOfPushers);
 	originalPusherPosition.resize(numberOfPushers);
+	holePosition.resize(numberOfBombs);
 	buffer = create_bitmap(SCREEN_W,SCREEN_H);//for double buffer
 	music = load_sample( "killingTime.wav" );
 	ground = load_bitmap( "floor.bmp", NULL );
@@ -56,15 +60,17 @@ int main(void)
 	//play_sample( music, 255, 128, 1000, 1 );
 	pusherPosition[0].x = 32;
 	pusherPosition[0].y = 96;
+	holePosition[0].x = 32;
+	holePosition[0].y = 64;
+	holePosition[1].x = 320;
+	holePosition[1].y = 320;
 	playerXY.x = 32;
 	playerXY.y = 32;
 	playerAnimY = 0;
 	playerAnimX = 0;
+	pusherAnimY = 32;
+	pusherAnimX = 0;
 	bombAnimX = 2;
-	girderPosition.resize(numberOfGirders);
-	bombPosition.resize(numberOfBombs);
-	pusherPosition.resize(numberOfPushers);
-	originalPusherPosition.resize(numberOfPushers);
 	for(int i = 0; i < numberOfPushers; i++)
 	{
 		originalPusherPosition[i].x = pusherPosition[i].x;
@@ -108,7 +114,10 @@ int main(void)
 	while(!key[KEY_ESC])
 	{	
 		blit( ground,buffer, 0, 0, 0, 0, 640, 480 );		
-		masked_blit( hole,buffer, 0, 0, 32, 64, 32, 32 );
+		for (int i = 0;i < numberOfBombs; i++)
+		{
+			masked_blit( hole,buffer, 0, 0, holePosition[i].x, holePosition[i].y, 32, 32 );
+		}
 		for (int i = 0;i < numberOfBombs; i++)
 		{
 			masked_blit( bomb,buffer, bombAnimX, 2, bombPosition[i].x, bombPosition[i].y, 28, 28 );
@@ -119,7 +128,7 @@ int main(void)
 		}
 		for (int i = 0;i < numberOfPushers; i++)
 		{
-			masked_blit( pusher,buffer, 0, 0, pusherPosition[i].x, pusherPosition[i].y, 32, 32 );
+			masked_blit( pusher,buffer, pusherAnimX, pusherAnimY, pusherPosition[i].x, pusherPosition[i].y, 32, 32 );
 		}
 		masked_blit( player,buffer, playerAnimX, playerAnimY, playerXY.x, playerXY.y, 32, 32 );
 		blit( buffer,screen,0,0,0,0,buffer->w,buffer->h );
@@ -184,12 +193,19 @@ void movePusherX()
 		if (pusherPosition[i].x > (originalPusherPosition[i].x + (pusherRange*32)))
 		{
 			pusherDirection = -1;
+			pusherAnimY = 64;
 		}
 		else if (pusherPosition[i].x < originalPusherPosition[i].x)
 		{
 			pusherDirection = 1;
+			pusherAnimY = 32;
 		}
 		pusherPosition[i].x+=pusherDirection;
+		pusherAnimX += 32;
+		if(pusherAnimX > 64 )
+		{
+			pusherAnimX = 0;
+		}
 	}
 }
 
