@@ -32,6 +32,8 @@ std::vector<position> bombPosition;
 std::vector<position> originalPusherPosition;
 std::vector<position> pusherPosition;
 std::vector<position> holePosition;
+int numberOfBombs = 2;
+int numberOfGirders = 66;
 int pusherRange = 6;
 int numberOfPushers = 1;
 int	pusherDirection = 1;
@@ -44,8 +46,6 @@ int main(void)
 	install_timer();
 	set_color_depth(32);//Set the colour depth to 32 bit
 	set_gfx_mode( GFX_AUTODETECT_WINDOWED, 640, 480, 0, 0 ); //Sets the graphics mode
-	int numberOfBombs = 2;
-	int numberOfGirders = 66;
 	girderPosition.resize(numberOfGirders);
 	bombPosition.resize(numberOfBombs);
 	pusherPosition.resize(numberOfPushers);
