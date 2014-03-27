@@ -1,0 +1,1 @@
+0//number of levels in file. KEY:none=0/girder=1/playerSpawn=2/pusherSpawn=3/pusherEnd=4/bomb=5/endPoint=6

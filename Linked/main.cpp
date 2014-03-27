@@ -23,6 +23,7 @@ volatile int playerAnimY;
 volatile int playerAnimX;
 volatile int bombAnimX;
 std::vector<position> girderPosition;
+std::vector<position> bombPosition;
 
 int main(void)
 {
@@ -45,10 +46,11 @@ int main(void)
 	playerXY.y = 32;
 	playerAnimY = 0;
 	playerAnimX = 0;
-	bombAnimX = 0;
+	bombAnimX = 2;
 	install_int( bombAnim,100 );
 	install_int( respondToKeyboard,10 );
 	girderPosition.resize(66);
+	bombPosition.resize(2);
 	int a = 0;
 	for (int i = 0;i < 20; i++)
 	{
@@ -77,11 +79,18 @@ int main(void)
 		girderPosition[i].y = (a*32);
 		a++;
 	}
+	bombPosition[0].x = 64;
+	bombPosition[0].y = 64;
+	bombPosition[1].x = 128;
+	bombPosition[1].y = 128;
 	while(!key[KEY_ESC])
 	{	
-		blit( ground,buffer, 0, 0, 0, 0, 640, 480 );
-		masked_blit( bomb,buffer, bombAnimX, 0, 32, 128, 32, bomb->h );
+		blit( ground,buffer, 0, 0, 0, 0, 640, 480 );		
 		masked_blit( hole,buffer, 0, 0, 32, 64, 32, 32 );
+		for (int i = 0;i < 2; i++)
+		{
+			masked_blit( bomb,buffer, bombAnimX, 2, bombPosition[i].x, bombPosition[i].y, 28, 28 );
+		}
 		masked_blit( pusher,buffer, 0, 0, 32, 96, 32, 32 );
 		for (int i = 0;i < 66; i++)
 		{
@@ -131,21 +140,57 @@ bool girderCollision()
 	return crash;
 }
 
+bool bombGirderCollision(int bomb)
+{
+	bool crash = false;
+	for (int i = 0; i < 66; i++)
+	{
+		if(collision(bombPosition[bomb].x, bombPosition[bomb].y, 28, 28, girderPosition[i].x, girderPosition[i].y, 32, 32) == 1)
+		{
+			crash = true;
+		}
+	}
+	return crash;
+}
+
+bool bombCollision()
+{
+	bool crash = false;
+	for (int i = 0; i < 2; i++)
+	{
+		if(collision(playerXY.x, playerXY.y, 32, 32, bombPosition[i].x, bombPosition[i].y, 28, 28) == 1)
+		{
+			crash = true;
+		}
+	}
+	return crash;
+}
+
+bool bombBombCollision()
+{
+	bool crash = false;
+	if(collision(bombPosition[0].x, bombPosition[0].y, 28, 28, bombPosition[1].x, bombPosition[1].y, 28, 28) == 1)
+		{
+			crash = true;
+		}
+	return crash;
+}
+
 void bombAnim()
 {
 	switch(bombAnimX)
 	{
-	case 0:
-		bombAnimX = 32;
+	case 2:
+		bombAnimX = 34;
 		break;
-	case 32:
-		bombAnimX = 64;
+	case 34:
+		bombAnimX = 66;
 		break;
-	case 64:
-		bombAnimX = 96;
+	case 66:
+		bombAnimX = 98;
 		break;
-	case 96:
-		bombAnimX = 0;
+	case 98:
+		bombAnimX = 2;
 	break;
 	}
 }
@@ -161,6 +206,24 @@ void respondToKeyboard()
 		else
 		{
 			playerXY.y++;
+		}
+		if(bombCollision() == false)
+		{
+		}
+		else
+		{
+			for (int i = 0; i < 2; i++)
+			{
+				bombPosition[i].y--;
+				if(bombGirderCollision(i) == false && bombBombCollision() == false)
+				{
+				}
+				else
+				{
+					bombPosition[i].y++;
+					playerXY.y++;
+				}
+			}
 		}
 		playerAnimY = 0;
 		playerAnimX += 32;
@@ -178,6 +241,24 @@ void respondToKeyboard()
 		else
 		{
 			playerXY.y--;
+		}
+		if(bombCollision() == false)
+		{
+		}
+		else
+		{
+			for (int i = 0; i < 2; i++)
+			{
+				bombPosition[i].y++;
+				if(bombGirderCollision(i) == false && bombBombCollision() == false)
+				{
+				}
+				else
+				{
+					bombPosition[i].y--;
+					playerXY.y--;
+				}
+			}
 		}
 		playerAnimY = 96;
 		playerAnimX += 32;
@@ -197,6 +278,24 @@ void respondToKeyboard()
 		{
 			playerXY.x++;
 		}
+		if(bombCollision() == false)
+		{
+		}
+		else
+		{
+			for (int i = 0; i < 2; i++)
+			{
+				bombPosition[i].x--;
+				if(bombGirderCollision(i) == false && bombBombCollision() == false)
+				{
+				}
+				else
+				{
+					bombPosition[i].x++;
+					playerXY.x++;
+				}
+			}
+		}
 		playerAnimY = 64;
 		playerAnimX += 32;
 		if(playerAnimX > 64 )
@@ -214,6 +313,25 @@ void respondToKeyboard()
 		{
 			playerXY.x--;
 		}
+		if(bombCollision() == false)
+		{
+		}
+		else
+		{
+			for (int i = 0; i < 2; i++)
+			{
+				bombPosition[i].x++;
+				if(bombGirderCollision(i) == false && bombBombCollision() == false)
+				{
+				}
+				else
+				{
+					playerXY.x--;
+					bombPosition[i].x--;
+					
+				}
+			}
+		}
 		playerAnimY = 32;
 		playerAnimX += 32;
 		if(playerAnimX > 64 )
@@ -227,6 +345,10 @@ void respondToKeyboard()
 		playerXY.y = 32;
 		playerAnimY = 0;
 		playerAnimX = 0;
-		bombAnimX = 0;
+		bombAnimX = 2;
+		bombPosition[0].x = 64;
+		bombPosition[0].y = 64;
+		bombPosition[1].x = 128;
+		bombPosition[1].y = 128;
 	}
 }
