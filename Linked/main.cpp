@@ -9,6 +9,7 @@ struct position
 
 void respondToKeyboard(void);
 void bombAnim(void);
+void holeAnim(void);
 void movePusherX(void);
 bool girderCollision();
 SAMPLE *music;
@@ -25,6 +26,7 @@ volatile int playerAnimX;
 volatile int pusherAnimY;
 volatile int pusherAnimX;
 volatile int bombAnimX;
+volatile int holeAnimX;
 std::vector<position> girderPosition;
 std::vector<position> bombPosition;
 std::vector<position> originalPusherPosition;
@@ -71,6 +73,7 @@ int main(void)
 	pusherAnimY = 32;
 	pusherAnimX = 0;
 	bombAnimX = 2;
+	holeAnimX = 0;
 	for(int i = 0; i < numberOfPushers; i++)
 	{
 		originalPusherPosition[i].x = pusherPosition[i].x;
@@ -116,7 +119,7 @@ int main(void)
 		blit( ground,buffer, 0, 0, 0, 0, 640, 480 );		
 		for (int i = 0;i < numberOfBombs; i++)
 		{
-			masked_blit( hole,buffer, 0, 0, holePosition[i].x, holePosition[i].y, 32, 32 );
+			masked_blit( hole,buffer, holeAnimX, 0, holePosition[i].x, holePosition[i].y, 32, 32 );
 		}
 		for (int i = 0;i < numberOfBombs; i++)
 		{
@@ -132,6 +135,18 @@ int main(void)
 		}
 		masked_blit( player,buffer, playerAnimX, playerAnimY, playerXY.x, playerXY.y, 32, 32 );
 		blit( buffer,screen,0,0,0,0,buffer->w,buffer->h );
+		bool test = false; ////test setting off an animation at certain point
+		for(int i = 0; i < numberOfBombs; i++)
+		{
+			if (playerXY.x == holePosition[i].x && playerXY.y == holePosition[i].y )
+			{
+				test = true;
+			}
+		}
+		if (test == true)
+		{
+			install_int( holeAnim,150 );
+		}
 	}
 	destroy_sample( music );
 	destroy_bitmap( ground );
@@ -275,20 +290,20 @@ void movePlayer(bool axis, int direction)
 
 void bombAnim()
 {
-	switch(bombAnimX)
+	bombAnimX+=32;
+	if(bombAnimX>98)
 	{
-	case 2:
-		bombAnimX = 34;
-		break;
-	case 34:
-		bombAnimX = 66;
-		break;
-	case 66:
-		bombAnimX = 98;
-		break;
-	case 98:
 		bombAnimX = 2;
-	break;
+	}
+}
+
+void holeAnim()
+{
+	holeAnimX+=32;
+	if(holeAnimX>224)
+	{
+		holeAnimX = 0;
+		remove_int( holeAnim );
 	}
 }
 
