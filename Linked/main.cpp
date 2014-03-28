@@ -1,3 +1,4 @@
+#include "fileLoader.h"
 #include <allegro.h>
 #include <vector>
 
@@ -32,11 +33,8 @@ std::vector<position> bombPosition;
 std::vector<position> originalPusherPosition;
 std::vector<position> pusherPosition;
 std::vector<position> holePosition;
-int numberOfBombs = 2;
-int numberOfGirders = 66;
-int pusherRange = 6;
-int numberOfPushers = 1;
 int	pusherDirection = 1;
+FileLoader data;
 
 int main(void)
 {
@@ -46,11 +44,12 @@ int main(void)
 	install_timer();
 	set_color_depth(32);//Set the colour depth to 32 bit
 	set_gfx_mode( GFX_AUTODETECT_WINDOWED, 640, 480, 0, 0 ); //Sets the graphics mode
-	girderPosition.resize(numberOfGirders);
-	bombPosition.resize(numberOfBombs);
-	pusherPosition.resize(numberOfPushers);
-	originalPusherPosition.resize(numberOfPushers);
-	holePosition.resize(numberOfBombs);
+	data.setNumbers();
+	girderPosition.resize(data.getGirders());
+	bombPosition.resize(data.getBombs());
+	pusherPosition.resize(data.getPushers());
+	originalPusherPosition.resize(data.getPushers());
+	holePosition.resize(data.getBombs());
 	buffer = create_bitmap(SCREEN_W,SCREEN_H);//for double buffer
 	music = load_sample( "killingTime.wav" );
 	ground = load_bitmap( "floor.bmp", NULL );
@@ -74,7 +73,7 @@ int main(void)
 	pusherAnimX = 0;
 	bombAnimX = 2;
 	holeAnimX = 0;
-	for(int i = 0; i < numberOfPushers; i++)
+	for(int i = 0; i < data.getPushers(); i++)
 	{
 		originalPusherPosition[i].x = pusherPosition[i].x;
 		originalPusherPosition[i].y = pusherPosition[i].y;
@@ -117,26 +116,26 @@ int main(void)
 	while(!key[KEY_ESC])
 	{	
 		blit( ground,buffer, 0, 0, 0, 0, 640, 480 );		
-		for (int i = 0;i < numberOfBombs; i++)
+		for (int i = 0;i < data.getBombs(); i++)
 		{
 			masked_blit( hole,buffer, holeAnimX, 0, holePosition[i].x, holePosition[i].y, 32, 32 );
 		}
-		for (int i = 0;i < numberOfBombs; i++)
+		for (int i = 0;i < data.getBombs(); i++)
 		{
 			masked_blit( bomb,buffer, bombAnimX, 2, bombPosition[i].x, bombPosition[i].y, 28, 28 );
 		}
-		for (int i = 0;i < numberOfGirders; i++)
+		for (int i = 0;i < data.getGirders(); i++)
 		{
 			masked_blit( girder,buffer, 0, 0, girderPosition[i].x, girderPosition[i].y, girder->w, girder->h );
 		}
-		for (int i = 0;i < numberOfPushers; i++)
+		for (int i = 0;i < data.getPushers(); i++)
 		{
 			masked_blit( pusher,buffer, pusherAnimX, pusherAnimY, pusherPosition[i].x, pusherPosition[i].y, 32, 32 );
 		}
 		masked_blit( player,buffer, playerAnimX, playerAnimY, playerXY.x, playerXY.y, 32, 32 );
 		blit( buffer,screen,0,0,0,0,buffer->w,buffer->h );
 		bool test = false; ////test setting off an animation at certain point
-		for(int i = 0; i < numberOfBombs; i++)
+		for(int i = 0; i < data.getBombs(); i++)
 		{
 			if (playerXY.x == holePosition[i].x && playerXY.y == holePosition[i].y )
 			{
@@ -203,9 +202,9 @@ bool collision(int index, int x1, int y1, int w1, int h1, int typeOfCollison, in
 
 void movePusherX()
 {
-	for(int i = 0; i < numberOfPushers; i++)
+	for(int i = 0; i < data.getPushers(); i++)
 	{
-		if (pusherPosition[i].x > (originalPusherPosition[i].x + (pusherRange*32)))
+		if (pusherPosition[i].x > (originalPusherPosition[i].x + (data.getPusherRange()*32)))
 		{
 			pusherDirection = -1;
 			pusherAnimY = 64;
