@@ -28,11 +28,8 @@ volatile int pusherAnimY;
 volatile int pusherAnimX;
 volatile int bombAnimX;
 volatile int holeAnimX;
-std::vector<position> girderPosition;
 std::vector<position> bombPosition;
-std::vector<position> originalPusherPosition;
 std::vector<position> pusherPosition;
-std::vector<position> holePosition;
 int	pusherDirection = 1;
 FileLoader data;
 
@@ -45,11 +42,9 @@ int main(void)
 	set_color_depth(32);//Set the colour depth to 32 bit
 	set_gfx_mode( GFX_AUTODETECT_WINDOWED, 640, 480, 0, 0 ); //Sets the graphics mode
 	data.setNumbers();
-	girderPosition.resize(data.getGirders());
+	data.setArrays();
 	bombPosition.resize(data.getBombs());
 	pusherPosition.resize(data.getPushers());
-	originalPusherPosition.resize(data.getPushers());
-	holePosition.resize(data.getBombs());
 	buffer = create_bitmap(SCREEN_W,SCREEN_H);//for double buffer
 	music = load_sample( "killingTime.wav" );
 	ground = load_bitmap( "floor.bmp", NULL );
@@ -59,12 +54,6 @@ int main(void)
 	pusher = load_bitmap( "pusher.bmp", NULL );
 	girder = load_bitmap( "girder.bmp", NULL );
 	//play_sample( music, 255, 128, 1000, 1 );
-	pusherPosition[0].x = 32;
-	pusherPosition[0].y = 96;
-	holePosition[0].x = 32;
-	holePosition[0].y = 64;
-	holePosition[1].x = 320;
-	holePosition[1].y = 320;
 	playerXY.x = 32;
 	playerXY.y = 32;
 	playerAnimY = 0;
@@ -75,36 +64,8 @@ int main(void)
 	holeAnimX = 0;
 	for(int i = 0; i < data.getPushers(); i++)
 	{
-		originalPusherPosition[i].x = pusherPosition[i].x;
-		originalPusherPosition[i].y = pusherPosition[i].y;
-	}
-	int a = 0;
-	for (int i = 0;i < 20; i++)
-	{
-		girderPosition[i].x = (a*32);
-		girderPosition[i].y = 0;
-		a++;
-	}
-	a = 0;
-	for (int i = 20;i < 40; i++)
-	{
-		girderPosition[i].x = (a*32);
-		girderPosition[i].y = 448;
-		a++;
-	}
-	a = 1;
-	for (int i = 40; i < 53; i++)
-	{
-		girderPosition[i].x = 0;
-		girderPosition[i].y = (a*32);
-		a++;
-	}
-	a = 1;
-	for (int i = 53;i < 66; i++)
-	{
-		girderPosition[i].x = 608;
-		girderPosition[i].y = (a*32);
-		a++;
+		pusherPosition[i].x = data.getPusherPositionX(i);
+		pusherPosition[i].y = data.getPusherPositionY(i);
 	}
 	bombPosition[0].x = 64;
 	bombPosition[0].y = 64;
@@ -118,7 +79,7 @@ int main(void)
 		blit( ground,buffer, 0, 0, 0, 0, 640, 480 );		
 		for (int i = 0;i < data.getBombs(); i++)
 		{
-			masked_blit( hole,buffer, holeAnimX, 0, holePosition[i].x, holePosition[i].y, 32, 32 );
+			masked_blit( hole,buffer, holeAnimX, 0, data.getHolePositionX(i), data.getHolePositionY(i), 32, 32 );
 		}
 		for (int i = 0;i < data.getBombs(); i++)
 		{
@@ -126,7 +87,7 @@ int main(void)
 		}
 		for (int i = 0;i < data.getGirders(); i++)
 		{
-			masked_blit( girder,buffer, 0, 0, girderPosition[i].x, girderPosition[i].y, girder->w, girder->h );
+			masked_blit( girder,buffer, 0, 0, data.getGirderPositionX(i), data.getGirderPositionY(i), girder->w, girder->h );
 		}
 		for (int i = 0;i < data.getPushers(); i++)
 		{
@@ -137,7 +98,7 @@ int main(void)
 		bool test = false; ////test setting off an animation at certain point
 		for(int i = 0; i < data.getBombs(); i++)
 		{
-			if (playerXY.x == holePosition[i].x && playerXY.y == holePosition[i].y )
+			if (playerXY.x == data.getHolePositionX(i) && playerXY.y == data.getHolePositionY(i) )
 			{
 				test = true;
 			}
@@ -184,8 +145,8 @@ bool collision(int index, int x1, int y1, int w1, int h1, int typeOfCollison, in
 		switch(typeOfCollison)
 		{
 		case 0:
-			x2 = girderPosition[i].x;
-			y2 = girderPosition[i].y;
+			x2 = data.getGirderPositionX(i);
+			y2 = data.getGirderPositionY(i);
 			break;
 		case 1:
 			x2 = bombPosition[i].x;
@@ -204,12 +165,12 @@ void movePusherX()
 {
 	for(int i = 0; i < data.getPushers(); i++)
 	{
-		if (pusherPosition[i].x > (originalPusherPosition[i].x + (data.getPusherRange()*32)))
+		if (pusherPosition[i].x > (data.getPusherPositionX(i) + (data.getPusherRange()*32)))
 		{
 			pusherDirection = -1;
 			pusherAnimY = 64;
 		}
-		else if (pusherPosition[i].x < originalPusherPosition[i].x)
+		else if (pusherPosition[i].x < data.getPusherPositionX(i))
 		{
 			pusherDirection = 1;
 			pusherAnimY = 32;

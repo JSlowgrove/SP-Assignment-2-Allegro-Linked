@@ -4,14 +4,23 @@
 
 #include <allegro.h>
 #include <string>
+#include <vector>
 
 class FileLoader
 {
    private:
+	struct position
+	{
+		int x;
+		int y;
+	};
 	int numberOfBombs;
 	int numberOfGirders;
 	int pusherRange;
 	int numberOfPushers;
+	std::vector<position> holePosition;
+	std::vector<position> girderPosition;
+	std::vector<position> originalPusherPosition;
    public:
 	FileLoader();
 	void loadFile(std::string);
@@ -21,6 +30,12 @@ class FileLoader
 	int getGirders();
 	int getPusherRange();
 	int getPushers();
+	int getHolePositionX(int);
+	int getGirderPositionX(int);
+	int getPusherPositionX(int);
+	int getHolePositionY(int);
+	int getGirderPositionY(int);
+	int getPusherPositionY(int);
 };
 
 #endif
