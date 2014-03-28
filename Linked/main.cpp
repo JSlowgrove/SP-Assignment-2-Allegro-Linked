@@ -43,6 +43,7 @@ int main(void)
 	set_gfx_mode( GFX_AUTODETECT_WINDOWED, 640, 480, 0, 0 ); //Sets the graphics mode
 	data.setNumbers();
 	data.setArrays();
+	int temp = data.getBombs();
 	bombPosition.resize(data.getBombs());
 	pusherPosition.resize(data.getPushers());
 	buffer = create_bitmap(SCREEN_W,SCREEN_H);//for double buffer
@@ -54,8 +55,8 @@ int main(void)
 	pusher = load_bitmap( "pusher.bmp", NULL );
 	girder = load_bitmap( "girder.bmp", NULL );
 	//play_sample( music, 255, 128, 1000, 1 );
-	playerXY.x = 32;
-	playerXY.y = 32;
+	playerXY.x = data.getPlayerX();
+	playerXY.y = data.getPlayerY();
 	playerAnimY = 0;
 	playerAnimX = 0;
 	pusherAnimY = 32;
@@ -67,10 +68,11 @@ int main(void)
 		pusherPosition[i].x = data.getPusherPositionX(i);
 		pusherPosition[i].y = data.getPusherPositionY(i);
 	}
-	bombPosition[0].x = 64;
-	bombPosition[0].y = 64;
-	bombPosition[1].x = 128;
-	bombPosition[1].y = 128;
+	for(int i = 0; i < data.getBombs(); i++)
+	{
+		bombPosition[i].x = data.getBombPositionX(i);
+		bombPosition[i].y = data.getBombPositionY(i);
+	}
 	install_int( bombAnim,100 );
 	install_int( respondToKeyboard,10 );
 	install_int( movePusherX,10 );
@@ -312,14 +314,20 @@ void respondToKeyboard()
 	}
 	if(key[KEY_R])
 	{
-		playerXY.x = 32;
-		playerXY.y = 32;
+		playerXY.x = data.getPlayerX();
+		playerXY.y = data.getPlayerY();
 		playerAnimY = 0;
 		playerAnimX = 0;
 		bombAnimX = 2;
-		bombPosition[0].x = 64;
-		bombPosition[0].y = 64;
-		bombPosition[1].x = 128;
-		bombPosition[1].y = 128;
+		for(int i = 0; i < data.getBombs(); i++)
+		{
+			bombPosition[i].x = data.getBombPositionX(i);
+			bombPosition[i].y = data.getBombPositionY(i);
+		}
+		for(int i = 0; i < data.getPushers(); i++)
+		{
+			pusherPosition[i].x = data.getPusherPositionX(i);
+			pusherPosition[i].y = data.getPusherPositionY(i);
+		}
 	}
 }
