@@ -26,8 +26,6 @@ class FileLoader
    public:
 	FileLoader();
 	void loadFile(std::string);
-	void setArrays();
-	void setNumbers();
 	int getBombs();
 	int getGirders();
 	int getPusherRange();

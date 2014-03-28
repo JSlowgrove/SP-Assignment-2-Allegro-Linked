@@ -5,20 +5,24 @@
 
 FileLoader::FileLoader()
 {	
+	
 }
 
-void loadFile(std::string fileName)
+void FileLoader::loadFile(std::string fileName)
 {
-}
-
-void FileLoader::setArrays()
-{
+	/*TEMP****************************************************************************************************************/
+	numberOfBombs = 2;
+	numberOfGirders = 66;
+	pusherRange = 6;
+	numberOfPushers = 1;
+	/*END OF TEMP*********************************************************************************************************/
+	
 	girderPosition.resize(numberOfGirders);
 	originalPusherPosition.resize(numberOfPushers);
 	holePosition.resize(numberOfBombs);
 	bombPosition.resize(numberOfBombs);
 
-	/*TEMP*********************************************************************************************************/
+	/*TEMP****************************************************************************************************************/
 	holePosition[0].x = 32;
 	holePosition[0].y = 64;
 	holePosition[1].x = 320;
@@ -59,20 +63,7 @@ void FileLoader::setArrays()
 	bombPosition[1].y = 128;
 	playerXY.x = 32;
 	playerXY.y = 32;
-	/*TEMP*********************************************************************************************************/
-
-}
-
-void FileLoader::setNumbers()
-{
-
-	/*TEMP*********************************************************************************************************/
-	numberOfBombs = 2;
-	numberOfGirders = 66;
-	pusherRange = 6;
-	numberOfPushers = 1;
-	/*TEMP*********************************************************************************************************/
-
+	/*END OF TEMP*********************************************************************************************************/
 }
 
 int FileLoader::getBombs()

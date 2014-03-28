@@ -12,7 +12,6 @@ void respondToKeyboard(void);
 void bombAnim(void);
 void holeAnim(void);
 void movePusherX(void);
-bool girderCollision();
 SAMPLE *music;
 BITMAP *ground;
 BITMAP *bomb;
@@ -30,22 +29,27 @@ volatile int bombAnimX;
 volatile int holeAnimX;
 std::vector<position> bombPosition;
 std::vector<position> pusherPosition;
-int	pusherDirection = 1;
+int	pusherDirection;
 FileLoader data;
 
 int main(void)
 {
+	/*ALLEGRO STARTUP*/
 	allegro_init(); //Initialize Allegro
 	install_keyboard();//Allow keyboard input
 	install_sound( DIGI_AUTODETECT, MIDI_AUTODETECT, NULL );
 	install_timer();
 	set_color_depth(32);//Set the colour depth to 32 bit
 	set_gfx_mode( GFX_AUTODETECT_WINDOWED, 640, 480, 0, 0 ); //Sets the graphics mode
-	data.setNumbers();
-	data.setArrays();
-	int temp = data.getBombs();
+	/*END OF ALLEGRO STARTUP*/
+
+	/*LEVEL STARTUP*/
+	data.loadFile("preBuiltLevels.txt");
 	bombPosition.resize(data.getBombs());
 	pusherPosition.resize(data.getPushers());
+	/*LEVEL STARTUP*/
+
+	/*LOAD ASSETS*/
 	buffer = create_bitmap(SCREEN_W,SCREEN_H);//for double buffer
 	music = load_sample( "killingTime.wav" );
 	ground = load_bitmap( "floor.bmp", NULL );
@@ -54,7 +58,11 @@ int main(void)
 	player = load_bitmap( "remotePusher.bmp", NULL );
 	pusher = load_bitmap( "pusher.bmp", NULL );
 	girder = load_bitmap( "girder.bmp", NULL );
+	/*END OF LOAD ASSETS*/
+
 	//play_sample( music, 255, 128, 1000, 1 );
+
+	/*SET INITAL DATA*/
 	playerXY.x = data.getPlayerX();
 	playerXY.y = data.getPlayerY();
 	playerAnimY = 0;
@@ -63,21 +71,34 @@ int main(void)
 	pusherAnimX = 0;
 	bombAnimX = 2;
 	holeAnimX = 0;
+	pusherDirection = 1;
+	/*END OF SET INITAL DATA*/
+
+	/*SET PUSHER START*/
 	for(int i = 0; i < data.getPushers(); i++)
 	{
 		pusherPosition[i].x = data.getPusherPositionX(i);
 		pusherPosition[i].y = data.getPusherPositionY(i);
 	}
+	/*END SET PUSHER START*/
+
+	/*SET BOMB START*/
 	for(int i = 0; i < data.getBombs(); i++)
 	{
 		bombPosition[i].x = data.getBombPositionX(i);
 		bombPosition[i].y = data.getBombPositionY(i);
 	}
+	/*END SET BOMB START*/
+
+	/*START TIMERS*/
 	install_int( bombAnim,100 );
 	install_int( respondToKeyboard,10 );
 	install_int( movePusherX,10 );
+	/*END OF START TIMERS*/
+
 	while(!key[KEY_ESC])
 	{	
+		/*DISPLAYING IMAGES TO SCREEN USING A DOUBLE BUFFER*/
 		blit( ground,buffer, 0, 0, 0, 0, 640, 480 );		
 		for (int i = 0;i < data.getBombs(); i++)
 		{
@@ -97,6 +118,9 @@ int main(void)
 		}
 		masked_blit( player,buffer, playerAnimX, playerAnimY, playerXY.x, playerXY.y, 32, 32 );
 		blit( buffer,screen,0,0,0,0,buffer->w,buffer->h );
+		/*END OF DISPLAYING IMAGES TO SCREEN USING A DOUBLE BUFFER*/
+
+		/*ANIMATION*/
 		bool test = false; ////test setting off an animation at certain point
 		for(int i = 0; i < data.getBombs(); i++)
 		{
@@ -109,7 +133,10 @@ int main(void)
 		{
 			install_int( holeAnim,150 );
 		}
+		/*END OF ANIMATION*/
 	}
+
+	/*DESTROY DATA*/
 	destroy_sample( music );
 	destroy_bitmap( ground );
 	destroy_bitmap( bomb );
@@ -118,7 +145,8 @@ int main(void)
 	destroy_bitmap( pusher );
 	destroy_bitmap( girder );
 	remove_int( bombAnim );
-	remove_int( respondToKeyboard );
+	remove_int( respondToKeyboard );	
+	/*END OF DESTROY DATA*/
 	return 0;
 }
 END_OF_MAIN()
@@ -273,6 +301,7 @@ void respondToKeyboard()
 {
 	if(key[KEY_W])
 	{	
+		/*UP*/
 		movePlayer(true, -1);
 		playerAnimY = 0;
 		playerAnimX += 32;
@@ -280,9 +309,11 @@ void respondToKeyboard()
 		{
 			playerAnimX = 0;
 		}
+		/*END OF UP*/
 	}
 	if(key[KEY_S])
 	{
+		/*DOWN*/
 		movePlayer(true, 1);
 		playerAnimY = 96;
 		playerAnimX += 32;
@@ -290,10 +321,12 @@ void respondToKeyboard()
 		{
 			playerAnimX = 0;
 		}
+		/*END OF DOWN*/
 	}
 
 	if(key[KEY_A])
 	{
+		/*LEFT*/
 		movePlayer(false, -1);
 		playerAnimY = 64;
 		playerAnimX += 32;
@@ -301,9 +334,11 @@ void respondToKeyboard()
 		{
 			playerAnimX = 0;
 		}
+		/*END OF LEFT*/
 	}
 	if(key[KEY_D])
 	{
+		/*RIGHT*/
 		movePlayer(false, 1);
 		playerAnimY = 32;
 		playerAnimX += 32;
@@ -311,9 +346,11 @@ void respondToKeyboard()
 		{
 			playerAnimX = 0;
 		}
+		/*END OF RIGHT*/
 	}
 	if(key[KEY_R])
 	{
+		/*RESET GAME*/
 		playerXY.x = data.getPlayerX();
 		playerXY.y = data.getPlayerY();
 		playerAnimY = 0;
@@ -329,5 +366,6 @@ void respondToKeyboard()
 			pusherPosition[i].x = data.getPusherPositionX(i);
 			pusherPosition[i].y = data.getPusherPositionY(i);
 		}
+		/*END OF RESET GAME*/
 	}
 }
