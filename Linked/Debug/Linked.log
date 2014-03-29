@@ -1,7 +1,7 @@
-﻿Build started 29/03/2014 23:05:07.
+﻿Build started 29/03/2014 23:41:54.
      1>Project "C:\Users\Jamie\Documents\Visual Studio 2010\Projects\Linked\Linked\Linked.vcxproj" on node 2 (build target(s)).
      1>InitializeBuildStatus:
-         Creating "Debug\Linked.unsuccessfulbuild" because "AlwaysCreate" was specified.
+         Touching "Debug\Linked.unsuccessfulbuild".
        ClCompile:
          All outputs are up-to-date.
        Link:

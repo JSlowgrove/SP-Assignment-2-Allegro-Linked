@@ -11,6 +11,7 @@ struct position
 void respondToKeyboard(void);
 void bombAnim(void);
 void holeAnim(void);
+void movePlayer32(void);
 void movePusherX(void);
 SAMPLE *music;
 BITMAP *ground;
@@ -36,6 +37,9 @@ std::vector<position> bombPosition;
 std::vector<position> pusherPosition;
 int	pusherDirection;
 FileLoader data;
+int moveInt = 0;
+bool axis;
+int direction;
 
 int main(void)
 {
@@ -53,8 +57,8 @@ int main(void)
 	/*TEMP------------------------------------------------------------------------------*/
 
 	/*LEVEL STARTUP*/
-	//data.loadFile("preBuiltLevels.txt");
-	data.loadFile("customBuiltLevels.txt");
+	data.loadFile("preBuiltLevels.txt");
+	//data.loadFile("customBuiltLevels.txt");
 	bombPosition.resize(data.getBombs());
 	pusherPosition.resize(data.getPushers());
 	/*LEVEL STARTUP*/
@@ -229,7 +233,7 @@ void movePusherX()
 	}
 }
 
-void movePlayer(bool axis, int direction)
+void movePlayer()
 {
 
 		switch(axis)
@@ -317,24 +321,24 @@ void respondToKeyboard()
 	if(key[KEY_W])
 	{	
 		/*UP*/
-		movePlayer(true, -1);
-		playerAnimY = 0;
-		playerAnimX += 32;
-		if(playerAnimX > 64 )
+		if (moveInt == 0)
 		{
-			playerAnimX = 0;
+			axis = true;
+			direction = -1;
+			playerAnimY = 0;
+			install_int( movePlayer32, 10 );
 		}
 		/*END OF UP*/
 	}
 	if(key[KEY_S])
 	{
 		/*DOWN*/
-		movePlayer(true, 1);
-		playerAnimY = 96;
-		playerAnimX += 32;
-		if(playerAnimX > 64 )
+		if (moveInt == 0)
 		{
-			playerAnimX = 0;
+			axis = true;
+			direction = 1;
+			playerAnimY = 96;
+			install_int( movePlayer32, 10 );
 		}
 		/*END OF DOWN*/
 	}
@@ -342,25 +346,26 @@ void respondToKeyboard()
 	if(key[KEY_A])
 	{
 		/*LEFT*/
-		movePlayer(false, -1);
-		playerAnimY = 64;
-		playerAnimX += 32;
-		if(playerAnimX > 64 )
+		if (moveInt == 0)
 		{
-			playerAnimX = 0;
+			axis = false;
+			direction = -1;
+			playerAnimY = 64;
+			install_int( movePlayer32,10 );
 		}
 		/*END OF LEFT*/
 	}
 	if(key[KEY_D])
 	{
 		/*RIGHT*/
-		movePlayer(false, 1);
-		playerAnimY = 32;
-		playerAnimX += 32;
-		if(playerAnimX > 64 )
+		if (moveInt == 0)
 		{
-			playerAnimX = 0;
+			axis = false;
+			direction = 1;
+			playerAnimY = 32;
+			install_int( movePlayer32,10 );
 		}
+
 		/*END OF RIGHT*/
 	}
 	if(key[KEY_R])
@@ -371,6 +376,7 @@ void respondToKeyboard()
 		playerAnimY = 0;
 		playerAnimX = 0;
 		bombAnimX = 2;
+		moveInt = 0;
 		for(int i = 0; i < data.getBombs(); i++)
 		{
 			bombPosition[i].x = data.getBombPositionX(i);
@@ -384,3 +390,20 @@ void respondToKeyboard()
 		/*END OF RESET GAME*/
 	}
 }
+
+void movePlayer32()
+{
+	movePlayer();
+	playerAnimX += 32;
+	if(playerAnimX > 64 )
+	{
+		playerAnimX = 0;
+	}
+	moveInt++;
+	if(moveInt==32)
+	{
+		moveInt = 0;
+		remove_int( movePlayer32 );
+	}
+}
+
