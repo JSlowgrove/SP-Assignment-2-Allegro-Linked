@@ -53,7 +53,8 @@ int main(void)
 	/*TEMP------------------------------------------------------------------------------*/
 
 	/*LEVEL STARTUP*/
-	data.loadFile("preBuiltLevels.txt");
+	//data.loadFile("preBuiltLevels.txt");
+	data.loadFile("customBuiltLevels.txt");
 	bombPosition.resize(data.getBombs());
 	pusherPosition.resize(data.getPushers());
 	/*LEVEL STARTUP*/

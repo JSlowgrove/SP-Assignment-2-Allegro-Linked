@@ -73,7 +73,7 @@ void FileLoader::loadFile(std::string fileName)
 					break;
 				case '2':
 					playerXY.x = a*32;
-					playerXY.y = i*32;
+					playerXY.y = (i-1)*32;
 					break;
 				case '3':
 					pusherPosition[tempPusher].x = a*32;
@@ -99,8 +99,12 @@ void FileLoader::loadFile(std::string fileName)
 					break;
 				}
 			}
-		} pusherRange = abs(pusherEnd[0].x - pusherPosition[0].x); //abs = always a positive value
-
+		} 
+		if (numberOfPushers != 0)
+		{
+			pusherRange = abs(pusherEnd[0].x - pusherPosition[0].x); //abs = always a positive value
+		}
+		
 	}
 
 	else std::cout << "Unable to open file"; 
