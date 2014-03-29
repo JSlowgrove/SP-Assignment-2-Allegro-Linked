@@ -20,6 +20,11 @@ BITMAP *player;
 BITMAP *pusher;
 BITMAP *girder;
 BITMAP *buffer;//used for double buffering
+
+/*TEMP------------------------------------------------------------------------------*/
+FONT *font;
+/*TEMP------------------------------------------------------------------------------*/
+
 volatile position playerXY;
 volatile int playerAnimY;
 volatile int playerAnimX;
@@ -42,6 +47,10 @@ int main(void)
 	set_color_depth(32);//Set the colour depth to 32 bit
 	set_gfx_mode( GFX_AUTODETECT_WINDOWED, 640, 480, 0, 0 ); //Sets the graphics mode
 	/*END OF ALLEGRO STARTUP*/
+
+	/*TEMP------------------------------------------------------------------------------*/
+	font = load_font("pongfont.pcx",NULL,NULL);
+	/*TEMP------------------------------------------------------------------------------*/
 
 	/*LEVEL STARTUP*/
 	data.loadFile("preBuiltLevels.txt");
@@ -117,6 +126,11 @@ int main(void)
 			masked_blit( pusher,buffer, pusherAnimX, pusherAnimY, pusherPosition[i].x, pusherPosition[i].y, 32, 32 );
 		}
 		masked_blit( player,buffer, playerAnimX, playerAnimY, playerXY.x, playerXY.y, 32, 32 );
+
+		/*TEMP------------------------------------------------------------------------------*/
+		//	textprintf_ex(buffer, font, 200, 200, makecol(0,0,0),-1, "%i", data.getPusherRange());
+		/*TEMP------------------------------------------------------------------------------*/
+
 		blit( buffer,screen,0,0,0,0,buffer->w,buffer->h );
 		/*END OF DISPLAYING IMAGES TO SCREEN USING A DOUBLE BUFFER*/
 
@@ -195,7 +209,7 @@ void movePusherX()
 {
 	for(int i = 0; i < data.getPushers(); i++)
 	{
-		if (pusherPosition[i].x > (data.getPusherPositionX(i) + (data.getPusherRange()*32)))
+		if (pusherPosition[i].x > (data.getPusherPositionX(i) + (data.getPusherRange())))
 		{
 			pusherDirection = -1;
 			pusherAnimY = 64;

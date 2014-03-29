@@ -2,6 +2,8 @@
 #include <allegro.h>
 #include <string>
 #include <vector>
+#include <iostream>
+#include <fstream>
 
 FileLoader::FileLoader()
 {	
@@ -10,60 +12,98 @@ FileLoader::FileLoader()
 
 void FileLoader::loadFile(std::string fileName)
 {
-	/*TEMP****************************************************************************************************************/
-	numberOfBombs = 2;
-	numberOfGirders = 66;
-	pusherRange = 6;
-	numberOfPushers = 1;
-	/*END OF TEMP*********************************************************************************************************/
-	
-	girderPosition.resize(numberOfGirders);
-	originalPusherPosition.resize(numberOfPushers);
-	holePosition.resize(numberOfBombs);
-	bombPosition.resize(numberOfBombs);
+	//number of levels in file. KEY:none=0/girder=1/playerSpawn=2/pusherSpawn=3/pusherEnd=4/bomb=5/endPoint=6
+	numberOfBombs = 0;
+	numberOfGirders = 0;
+	pusherRange = 0;
+	numberOfPushers = 0;
+	int tempPusher = 0;
+	int tempGirder = 0;
+	int tempBomb = 0;
+	int tempHole = 0;
+	int tempPusherEnd = 0;
+	std::ifstream file (fileName);
+	std::vector<std::string> line;
+	std::vector<position> pusherEnd;
+	std::vector<char> temp;
+	line.resize(1);
+	if (file.is_open())
+	{
+		int i = 0;
+		while ( getline (file,line[i]) )
+		{
+			i++;
+			line.resize(i+1);
+		}
+		file.close();
+		
+		numberOfLevels = atoi(line[0].c_str());
 
-	/*TEMP****************************************************************************************************************/
-	holePosition[0].x = 32;
-	holePosition[0].y = 64;
-	holePosition[1].x = 320;
-	holePosition[1].y = 320;
-	originalPusherPosition[0].x = 32;
-	originalPusherPosition[0].y = 96;
-	int a = 0;
-	for (int i = 0;i < 20; i++)
-	{
-		girderPosition[i].x = (a*32);
-		girderPosition[i].y = 0;
-		a++;
+		for(int i = 1; i < line.size(); i++)
+		{
+			for (int a = 0; a < line[i].size(); a++){
+				switch (line[i][a])
+				{
+				case '1':
+					numberOfGirders++;
+					break;
+				case '3':
+					numberOfPushers++;
+					break;
+				case '5':
+				case '6':
+					numberOfBombs++;
+					break;
+				default:
+					break;
+				}
+			}
+			girderPosition.resize(numberOfGirders);
+			pusherPosition.resize(numberOfPushers);
+			pusherEnd.resize(numberOfPushers);
+			holePosition.resize(numberOfBombs);
+			bombPosition.resize(numberOfBombs);
+			for (int a = 0; a < line[i].size(); a++){
+				switch (line[i][a])
+				{
+				case '1':
+					girderPosition[tempGirder].x = a*32;
+					girderPosition[tempGirder].y = (i-1)*32;
+					tempGirder++;
+					break;
+				case '2':
+					playerXY.x = a*32;
+					playerXY.y = i*32;
+					break;
+				case '3':
+					pusherPosition[tempPusher].x = a*32;
+					pusherPosition[tempPusher].y = (i-1)*32;
+					tempPusher++;
+					break;
+				case '4':
+					pusherEnd[tempPusherEnd].x = a*32;
+					pusherEnd[tempPusherEnd].y = (i-1)*32;
+					tempPusherEnd++;
+					break;
+				case '5':
+					bombPosition[tempBomb].x = a*32;
+					bombPosition[tempBomb].y = (i-1)*32;
+					tempBomb++;
+					break;
+				case '6':
+					holePosition[tempHole].x = a*32;
+					holePosition[tempHole].y = (i-1)*32;
+					tempHole++;
+					break;
+				default:
+					break;
+				}
+			}
+		} pusherRange = abs(pusherEnd[0].x - pusherPosition[0].x); //abs = always a positive value
+
 	}
-	a = 0;
-	for (int i = 20;i < 40; i++)
-	{
-		girderPosition[i].x = (a*32);
-		girderPosition[i].y = 448;
-		a++;
-	}
-	a = 1;
-	for (int i = 40; i < 53; i++)
-	{
-		girderPosition[i].x = 0;
-		girderPosition[i].y = (a*32);
-		a++;
-	}
-	a = 1;
-	for (int i = 53;i < 66; i++)
-	{
-		girderPosition[i].x = 608;
-		girderPosition[i].y = (a*32);
-		a++;
-	}
-	bombPosition[0].x = 64;
-	bombPosition[0].y = 64;
-	bombPosition[1].x = 128;
-	bombPosition[1].y = 128;
-	playerXY.x = 32;
-	playerXY.y = 32;
-	/*END OF TEMP*********************************************************************************************************/
+
+	else std::cout << "Unable to open file"; 
 }
 
 int FileLoader::getBombs()
@@ -98,7 +138,7 @@ int FileLoader::getGirderPositionX(int i)
 
 int FileLoader::getPusherPositionX(int i)
 {
-	return originalPusherPosition[i].x;
+	return pusherPosition[i].x;
 }
 
 int FileLoader::getHolePositionY(int i)
@@ -113,7 +153,7 @@ int FileLoader::getGirderPositionY(int i)
 
 int FileLoader::getPusherPositionY(int i)
 {
-	return originalPusherPosition[i].y;
+	return pusherPosition[i].y;
 }
 
 int FileLoader::getPlayerX()
@@ -134,4 +174,9 @@ int FileLoader::getBombPositionX(int i)
 int FileLoader::getBombPositionY(int i)
 {
 	return bombPosition[i].y;
+}
+
+int FileLoader::getNumberOfLevels()
+{
+	return numberOfLevels;
 }

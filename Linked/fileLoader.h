@@ -18,10 +18,11 @@ class FileLoader
 	int numberOfGirders;
 	int pusherRange;
 	int numberOfPushers;
+	int numberOfLevels;
 	position playerXY;
 	std::vector<position> holePosition;
 	std::vector<position> girderPosition;
-	std::vector<position> originalPusherPosition;
+	std::vector<position> pusherPosition;
 	std::vector<position> bombPosition;
    public:
 	FileLoader();
@@ -30,6 +31,7 @@ class FileLoader
 	int getGirders();
 	int getPusherRange();
 	int getPushers();
+	int getNumberOfLevels();
 	int getPlayerX();
 	int getPlayerY();
 	int getHolePositionX(int);
@@ -40,6 +42,7 @@ class FileLoader
 	int getPusherPositionY(int);
 	int getBombPositionX(int);
 	int getBombPositionY(int);
+	//std::string temp(int);
 };
 
 #endif
