@@ -14,6 +14,7 @@ void holeAnim(void);
 void movePlayer32(void);
 void movePusherX(void);
 SAMPLE *music;
+BITMAP *light;
 BITMAP *ground;
 BITMAP *bomb;
 BITMAP *hole;
@@ -33,6 +34,7 @@ volatile int pusherAnimY;
 volatile int pusherAnimX;
 volatile int bombAnimX;
 volatile int holeAnimX;
+volatile int lightAnimX;
 std::vector<position> bombPosition;
 std::vector<position> pusherPosition;
 int	pusherDirection;
@@ -72,6 +74,7 @@ int main(void)
 	player = load_bitmap( "remotePusher.bmp", NULL );
 	pusher = load_bitmap( "pusher.bmp", NULL );
 	girder = load_bitmap( "girder.bmp", NULL );
+	light = load_bitmap( "moveLight.bmp", NULL );
 	/*END OF LOAD ASSETS*/
 
 	//play_sample( music, 255, 128, 1000, 1 );
@@ -83,8 +86,9 @@ int main(void)
 	playerAnimX = 0;
 	pusherAnimY = 32;
 	pusherAnimX = 0;
-	bombAnimX = 2;
+	bombAnimX = 0;
 	holeAnimX = 0;
+	lightAnimX = 0;
 	pusherDirection = 1;
 	/*END OF SET INITAL DATA*/
 
@@ -120,7 +124,11 @@ int main(void)
 		}
 		for (int i = 0;i < data.getBombs(); i++)
 		{
-			masked_blit( bomb,buffer, bombAnimX, 2, bombPosition[i].x, bombPosition[i].y, 28, 28 );
+			masked_blit( bomb,buffer, bombAnimX, 0, bombPosition[i].x, bombPosition[i].y, 32, 32 );
+		}
+		for (int i = 0;i < data.getBombs(); i++)
+		{
+			masked_blit( light,buffer, lightAnimX, 0, bombPosition[i].x, bombPosition[i].y, 32, 32 );
 		}
 		for (int i = 0;i < data.getGirders(); i++)
 		{
@@ -260,8 +268,9 @@ void movePlayer()
 					break;
 			}
 		}
-		if(collision(2,playerXY.x, playerXY.y, 32, 32, 1, 28, 28) == false)//bomb collision check
+		if(collision(2,playerXY.x, playerXY.y, 32, 32, 1, 32, 32) == false)//bomb collision check
 		{
+			lightAnimX = 0;
 		}
 		else
 		{
@@ -271,12 +280,30 @@ void movePlayer()
 				{
 					case false:
 						bombPosition[i].x+=direction;
+						switch(direction)
+						{
+						case -1:
+							lightAnimX = 96;
+							break;
+						case 1:
+							lightAnimX = 128;
+							break;
+						}
 						break;
 					case true:
-						bombPosition[i].y+=direction;					
+						bombPosition[i].y+=direction;
+						switch(direction)
+						{
+						case -1:
+							lightAnimX = 32;
+							break;
+						case 1:
+							lightAnimX = 64;
+							break;
+						}
 						break;
 				}
-				if(collision(66,bombPosition[i].x, bombPosition[i].y, 28, 28, 0, 32, 32) == false && collision(1, bombPosition[1].x, bombPosition[1].y, 28, 28, 1, 28, 28) == false) //bomb girder collision check and bomb bomb collision check
+				if(collision(66,bombPosition[i].x, bombPosition[i].y, 32, 32, 0, 32, 32) == false && collision(1, bombPosition[1].x, bombPosition[1].y, 32, 32, 1, 32, 32) == false) //bomb girder collision check and bomb bomb collision check
 				{
 				}
 				else
@@ -300,9 +327,9 @@ void movePlayer()
 void bombAnim()
 {
 	bombAnimX+=32;
-	if(bombAnimX>98)
+	if(bombAnimX>96)
 	{
-		bombAnimX = 2;
+		bombAnimX = 0;
 	}
 }
 
@@ -375,7 +402,7 @@ void respondToKeyboard()
 		playerXY.y = data.getPlayerY();
 		playerAnimY = 0;
 		playerAnimX = 0;
-		bombAnimX = 2;
+		bombAnimX = 0;
 		moveInt = 0;
 		for(int i = 0; i < data.getBombs(); i++)
 		{
@@ -394,8 +421,8 @@ void respondToKeyboard()
 		for(int i = 0; i < data.getBombs(); i++)
 		{
 			holeAnimX = 32;
-			bombPosition[i].x = 1000 +(i*32);
-			bombPosition[i].y = 1000 +(i*32);
+			bombPosition[i].x = 640;
+			bombPosition[i].y = i*32;
 		}
 		install_int( holeAnim,150 );
 	}
