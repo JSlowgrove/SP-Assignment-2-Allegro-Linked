@@ -13,7 +13,11 @@ void bombAnim(void);
 void holeAnim(void);
 void movePlayer32(void);
 void movePusherX(void);
-SAMPLE *music;
+void countingDown(void);
+SAMPLE *win;
+SAMPLE *lose;
+SAMPLE *slide;
+SAMPLE *countdown;
 BITMAP *light;
 BITMAP *ground;
 BITMAP *bomb;
@@ -42,6 +46,7 @@ FileLoader data;
 int moveInt = 0;
 bool axis;
 int direction;
+int timeLeft = 90;
 
 int main(void)
 {
@@ -67,7 +72,10 @@ int main(void)
 
 	/*LOAD ASSETS*/
 	buffer = create_bitmap(SCREEN_W,SCREEN_H);//for double buffer
-	music = load_sample( "killingTime.wav" );
+	lose = load_sample( "lose.wav" );
+	win = load_sample( "win.wav" );
+	countdown = load_sample( "countdownBeep.wav" );
+	slide = load_sample( "slide.wav" );
 	ground = load_bitmap( "floor.bmp", NULL );
 	bomb = load_bitmap( "bomb.bmp", NULL );
 	hole = load_bitmap( "hole.bmp", NULL );
@@ -76,8 +84,6 @@ int main(void)
 	girder = load_bitmap( "girder.bmp", NULL );
 	light = load_bitmap( "moveLight.bmp", NULL );
 	/*END OF LOAD ASSETS*/
-
-	//play_sample( music, 255, 128, 1000, 1 );
 
 	/*SET INITAL DATA*/
 	playerXY.x = data.getPlayerX();
@@ -112,66 +118,73 @@ int main(void)
 	install_int( bombAnim,100 );
 	install_int( respondToKeyboard,10 );
 	install_int( movePusherX,10 );
+	install_int( countingDown,1000 );
 	/*END OF START TIMERS*/
 
 	while(!key[KEY_ESC])
 	{	
+		if(timeLeft == 11)
+		{
+			play_sample( countdown, 255, 128, 1000, 0 );
+		}
+		if(timeLeft == 0)
+		{
+			play_sample( lose, 255, 128, 1000, 0 );
+			remove_int( countingDown );
+			timeLeft = -1053;//lose
+		}
+		if(timeLeft < 0)
+		{
+			remove_int( bombAnim );
+			remove_int( movePusherX );
+			clear_to_color(buffer, makecol(255,0,0));
+			textprintf_ex(buffer, font, 300, 36, makecol(0,0,0),-1, "GAME OVER");
+		}
+		else
+		{
+			blit( ground,buffer, 0, 0, 0, 0, 640, 480 );		
+			for (int i = 0;i < data.getBombs(); i++)
+			{
+				blit( hole,buffer, holeAnimX, 0, data.getHolePositionX(i), data.getHolePositionY(i), 32, 32 );
+			}
+			for (int i = 0;i < data.getBombs(); i++)
+			{
+				masked_blit( bomb,buffer, bombAnimX, 0, bombPosition[i].x, bombPosition[i].y, 32, 32 );
+			}
+			for (int i = 0;i < data.getBombs(); i++)
+			{
+				masked_blit( light,buffer, lightAnimX, 0, bombPosition[i].x, bombPosition[i].y, 32, 32 );
+			}
+			for (int i = 0;i < data.getGirders(); i++)
+			{
+				masked_blit( girder,buffer, 0, 0, data.getGirderPositionX(i), data.getGirderPositionY(i), girder->w, girder->h );
+			}
+			for (int i = 0;i < data.getPushers(); i++)
+			{
+				masked_blit( pusher,buffer, pusherAnimX, pusherAnimY, pusherPosition[i].x, pusherPosition[i].y, 32, 32 );
+			}
+			masked_blit( player,buffer, playerAnimX, playerAnimY, playerXY.x, playerXY.y, 32, 32 );
+			textprintf_ex(buffer, font, 300, 36, makecol(255,0,0),-1, "%i", timeLeft);
+		}
 		/*DISPLAYING IMAGES TO SCREEN USING A DOUBLE BUFFER*/
-		blit( ground,buffer, 0, 0, 0, 0, 640, 480 );		
-		for (int i = 0;i < data.getBombs(); i++)
-		{
-			blit( hole,buffer, holeAnimX, 0, data.getHolePositionX(i), data.getHolePositionY(i), 32, 32 );
-		}
-		for (int i = 0;i < data.getBombs(); i++)
-		{
-			masked_blit( bomb,buffer, bombAnimX, 0, bombPosition[i].x, bombPosition[i].y, 32, 32 );
-		}
-		for (int i = 0;i < data.getBombs(); i++)
-		{
-			masked_blit( light,buffer, lightAnimX, 0, bombPosition[i].x, bombPosition[i].y, 32, 32 );
-		}
-		for (int i = 0;i < data.getGirders(); i++)
-		{
-			masked_blit( girder,buffer, 0, 0, data.getGirderPositionX(i), data.getGirderPositionY(i), girder->w, girder->h );
-		}
-		for (int i = 0;i < data.getPushers(); i++)
-		{
-			masked_blit( pusher,buffer, pusherAnimX, pusherAnimY, pusherPosition[i].x, pusherPosition[i].y, 32, 32 );
-		}
-		masked_blit( player,buffer, playerAnimX, playerAnimY, playerXY.x, playerXY.y, 32, 32 );
-
-		/*TEMP------------------------------------------------------------------------------*/
-		//	textprintf_ex(buffer, font, 200, 200, makecol(0,0,0),-1, "%i", data.getPusherRange());
-		/*TEMP------------------------------------------------------------------------------*/
-
 		blit( buffer,screen,0,0,0,0,buffer->w,buffer->h );
 		/*END OF DISPLAYING IMAGES TO SCREEN USING A DOUBLE BUFFER*/
-
-		/*ANIMATION*/
-		bool test = false; ////test setting off an animation at certain point
-		for(int i = 0; i < data.getBombs(); i++)
-		{
-			if (playerXY.x == data.getHolePositionX(i) && playerXY.y == data.getHolePositionY(i) )
-			{
-				test = true;
-			}
-		}
-		if (test == true)
-		{
-			install_int( holeAnim,150 );
-		}
-		/*END OF ANIMATION*/
 	}
 
 	/*DESTROY DATA*/
-	destroy_sample( music );
+	destroy_sample( lose );
+	destroy_sample( win );
+	destroy_sample( countdown );
+	destroy_sample( slide );
 	destroy_bitmap( ground );
 	destroy_bitmap( bomb );
 	destroy_bitmap( hole );
 	destroy_bitmap( player );
 	destroy_bitmap( pusher );
 	destroy_bitmap( girder );
+	destroy_bitmap( light );
 	remove_int( bombAnim );
+	remove_int( movePusherX );
 	remove_int( respondToKeyboard );	
 	/*END OF DESTROY DATA*/
 	return 0;
@@ -303,6 +316,10 @@ void movePlayer()
 						}
 						break;
 				}
+				if (moveInt == 0)
+				{
+					play_sample( slide, 255, 128, 1000, 0 );
+				}
 				if(collision(66,bombPosition[i].x, bombPosition[i].y, 32, 32, 0, 32, 32) == false && collision(1, bombPosition[1].x, bombPosition[1].y, 32, 32, 1, 32, 32) == false) //bomb girder collision check and bomb bomb collision check
 				{
 				}
@@ -414,6 +431,7 @@ void respondToKeyboard()
 			pusherPosition[i].x = data.getPusherPositionX(i);
 			pusherPosition[i].y = data.getPusherPositionY(i);
 		}
+		timeLeft = 90;
 		/*END OF RESET GAME*/
 	}
 	if(key[KEY_B])
@@ -424,6 +442,7 @@ void respondToKeyboard()
 			bombPosition[i].x = 640;
 			bombPosition[i].y = i*32;
 		}
+		play_sample( win, 255, 128, 1000, 0 );
 		install_int( holeAnim,150 );
 	}
 }
@@ -444,3 +463,8 @@ void movePlayer32()
 	}
 }
 
+
+void countingDown()
+{
+	timeLeft--;
+}
