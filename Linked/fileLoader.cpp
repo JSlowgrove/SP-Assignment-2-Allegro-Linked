@@ -96,6 +96,11 @@ void FileLoader::loadFile(std::string fileName)
 				}
 			}
 		} 
+		firstPusherPosition.resize(numberOfPushers);
+		for (int i = 0; i < numberOfPushers; i++)
+		{
+			firstPusherPosition[i] = pusherPosition[i].x;
+		}
 		if (numberOfPushers != 0)
 		{
 			pusherRange = abs(pusherEnd[0].x - pusherPosition[0].x); //abs = always a positive value
@@ -131,19 +136,14 @@ int FileLoader::getHolePositionX(int i)
 	return holePosition[i].x;
 }
 
-int FileLoader::getGirderPositionX(int i)
-{
-	return girderPosition[i].x;
-}
-
-int FileLoader::getPusherPositionX(int i)
-{
-	return pusherPosition[i].x;
-}
-
 int FileLoader::getHolePositionY(int i)
 {
 	return holePosition[i].y;
+}
+
+int FileLoader::getGirderPositionX(int i)
+{
+	return girderPosition[i].x;
 }
 
 int FileLoader::getGirderPositionY(int i)
@@ -151,9 +151,19 @@ int FileLoader::getGirderPositionY(int i)
 	return girderPosition[i].y;
 }
 
+int FileLoader::getPusherPositionX(int i)
+{
+	return pusherPosition[i].x;
+}
+
 int FileLoader::getPusherPositionY(int i)
 {
 	return pusherPosition[i].y;
+}
+
+int FileLoader::getFirstPusherPositionX(int i)
+{
+	return firstPusherPosition[i];
 }
 
 int FileLoader::getPlayerX()
@@ -199,4 +209,9 @@ void FileLoader::setBombPositionX(int i, int x)
 void FileLoader::setBombPositionY(int i, int y)
 {
 	bombPosition[i].y = y;
+}
+
+void FileLoader::setPusherPositionX(int i, int x)
+{
+	pusherPosition[i].x = x;
 }

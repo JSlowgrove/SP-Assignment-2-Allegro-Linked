@@ -2,6 +2,7 @@
 #include "collisionDetection.h"
 #include <allegro.h>
 #include <vector>
+#include <string>
 
 struct position
 {
@@ -43,15 +44,16 @@ volatile int pusherAnimX;
 volatile int bombAnimX;
 volatile int holeAnimX;
 volatile int lightAnimX;
-std::vector<position> pusherPosition;
-int	pusherDirection;
 FileLoader data;
 CollisionDetection collision;
+std::string fileName = "preBuiltLevels.txt";
+//string fileName = "customBuiltLevels.txt";
 int moveInt = 0;
 bool axis;
 int direction;
 int timeLeft = 90;
 int currentMusic = 1;
+int pusherDirection;
 
 int main(void)
 {
@@ -69,9 +71,7 @@ int main(void)
 	/*TEMP------------------------------------------------------------------------------*/
 
 	/*LEVEL STARTUP*/
-	data.loadFile("preBuiltLevels.txt");
-	//data.loadFile("customBuiltLevels.txt");
-	pusherPosition.resize(data.getPushers());
+	data.loadFile(fileName);
 	/*LEVEL STARTUP*/
 
 	/*LOAD ASSETS*/
@@ -102,14 +102,6 @@ int main(void)
 	lightAnimX = 0;
 	pusherDirection = 1;
 	/*END OF SET INITAL DATA*/
-
-	/*SET PUSHER START*/
-	for(int i = 0; i < data.getPushers(); i++)
-	{
-		pusherPosition[i].x = data.getPusherPositionX(i);
-		pusherPosition[i].y = data.getPusherPositionY(i);
-	}
-	/*END SET PUSHER START*/
 
 	/*START TIMERS*/
 	install_int( bombAnim,100 );
@@ -161,7 +153,7 @@ int main(void)
 			}
 			for (int i = 0;i < data.getPushers(); i++)
 			{
-				masked_blit( pusher,buffer, pusherAnimX, pusherAnimY, pusherPosition[i].x, pusherPosition[i].y, 32, 32 );
+				masked_blit( pusher,buffer, pusherAnimX, pusherAnimY, data.getPusherPositionX(i), data.getPusherPositionY(i), 32, 32 );
 			}
 			masked_blit( player,buffer, playerAnimX, playerAnimY, data.getPlayerX(), data.getPlayerY(), 32, 32 );
 			textprintf_ex(buffer, font, 300, 36, makecol(255,0,0),-1, "%i", timeLeft);
@@ -200,17 +192,17 @@ void movePusherX()
 {
 	for(int i = 0; i < data.getPushers(); i++)
 	{
-		if (pusherPosition[i].x > (data.getPusherPositionX(i) + (data.getPusherRange())))
+		if (data.getPusherPositionX(i) > (data.getFirstPusherPositionX(i) + data.getPusherRange()))
 		{
 			pusherDirection = -1;
 			pusherAnimY = 64;
 		}
-		else if (pusherPosition[i].x < data.getPusherPositionX(i))
+		else if (data.getPusherPositionX(i) < data.getFirstPusherPositionX(i))
 		{
 			pusherDirection = 1;
 			pusherAnimY = 32;
 		}
-		pusherPosition[i].x+=pusherDirection;
+		data.setPusherPositionX(i, data.getPusherPositionX(i) + pusherDirection);
 		pusherAnimX += 32;
 		if(pusherAnimX > 64 )
 		{
@@ -381,17 +373,12 @@ void respondToKeyboard()
 	if(key[KEY_R])
 	{
 		/*RESET GAME*/
-		data.loadFile("preBuiltLevels.txt");
+		data.loadFile(fileName);
 		playerAnimY = 0;
 		playerAnimX = 0;
 		bombAnimX = 0;
 		lightAnimX = 0;
 		moveInt = 0;
-		for(int i = 0; i < data.getPushers(); i++)
-		{
-			pusherPosition[i].x = data.getPusherPositionX(i);
-			pusherPosition[i].y = data.getPusherPositionY(i);
-		}
 		timeLeft = 90;
 		/*END OF RESET GAME*/
 	}
@@ -403,7 +390,7 @@ void respondToKeyboard()
 			data.setBombPositionX(i,640);
 			data.setBombPositionY(i,i*32);
 		}
-		//play_sample( win, 128, 128, 1000, 0 );
+		play_sample( win, 128, 128, 1000, 0 );
 		install_int( holeAnim,150 );
 	}
 }
