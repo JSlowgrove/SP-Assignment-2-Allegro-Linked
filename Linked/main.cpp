@@ -14,6 +14,10 @@ void holeAnim(void);
 void movePlayer32(void);
 void movePusherX(void);
 void countingDown(void);
+void backgroundMusic(void);
+SAMPLE *musicPart1;
+SAMPLE *musicPart2;
+SAMPLE *musicPart3;
 SAMPLE *win;
 SAMPLE *lose;
 SAMPLE *slide;
@@ -47,6 +51,7 @@ int moveInt = 0;
 bool axis;
 int direction;
 int timeLeft = 90;
+int currentMusic = 1;
 
 int main(void)
 {
@@ -72,6 +77,9 @@ int main(void)
 
 	/*LOAD ASSETS*/
 	buffer = create_bitmap(SCREEN_W,SCREEN_H);//for double buffer
+	musicPart1 = load_sample( "killingTime1.wav" );
+	musicPart2 = load_sample( "killingTime2.wav" );
+	musicPart3 = load_sample( "killingTime3.wav" );
 	lose = load_sample( "lose.wav" );
 	win = load_sample( "win.wav" );
 	countdown = load_sample( "countdownBeep.wav" );
@@ -119,7 +127,10 @@ int main(void)
 	install_int( respondToKeyboard,10 );
 	install_int( movePusherX,10 );
 	install_int( countingDown,1000 );
+	install_int( backgroundMusic,68023 );
 	/*END OF START TIMERS*/
+
+	play_sample( musicPart1, 255, 128, 1000, 0 );
 
 	while(!key[KEY_ESC])
 	{	
@@ -176,6 +187,9 @@ int main(void)
 	destroy_sample( win );
 	destroy_sample( countdown );
 	destroy_sample( slide );
+	destroy_sample( musicPart1 );
+	destroy_sample( musicPart2 );
+	destroy_sample( musicPart3 );
 	destroy_bitmap( ground );
 	destroy_bitmap( bomb );
 	destroy_bitmap( hole );
@@ -183,6 +197,7 @@ int main(void)
 	destroy_bitmap( pusher );
 	destroy_bitmap( girder );
 	destroy_bitmap( light );
+	remove_int( backgroundMusic );
 	remove_int( bombAnim );
 	remove_int( movePusherX );
 	remove_int( respondToKeyboard );	
@@ -420,6 +435,7 @@ void respondToKeyboard()
 		playerAnimY = 0;
 		playerAnimX = 0;
 		bombAnimX = 0;
+		lightAnimX = 0;
 		moveInt = 0;
 		for(int i = 0; i < data.getBombs(); i++)
 		{
@@ -442,7 +458,7 @@ void respondToKeyboard()
 			bombPosition[i].x = 640;
 			bombPosition[i].y = i*32;
 		}
-		play_sample( win, 255, 128, 1000, 0 );
+		//play_sample( win, 128, 128, 1000, 0 );
 		install_int( holeAnim,150 );
 	}
 }
@@ -463,8 +479,26 @@ void movePlayer32()
 	}
 }
 
-
 void countingDown()
 {
 	timeLeft--;
+}
+
+void backgroundMusic()
+{
+	switch(currentMusic)
+	{
+		case 0:
+			play_sample( musicPart1, 255, 128, 1000, 0 );
+			currentMusic = 1;
+			break;
+		case 1:
+			play_sample( musicPart2, 255, 128, 1000, 0 );
+			currentMusic = 2;
+			break;
+		case 2:
+			play_sample( musicPart3, 255, 128, 1000, 0 );
+			currentMusic = 0;
+			break;
+	}
 }

@@ -3,3 +3,7 @@ Door - https://www.freesound.org/people/Aiyumi/sounds/191951/
 Explosion - https://www.freesound.org/people/Isaac200000/sounds/181377/
 Slide - https://www.freesound.org/people/esperri/sounds/119140/
 Countdown - https://www.freesound.org/people/bernd666/sounds/114497/
+music: 
+[killingTime] Kevin MacLeod (incompetech.com) 
+Licensed under Creative Commons: By Attribution 3.0
+http://creativecommons.org/licenses/by/3.0/

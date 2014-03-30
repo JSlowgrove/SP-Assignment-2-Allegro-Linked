@@ -51,18 +51,20 @@ void FileLoader::loadFile(std::string fileName)
 					numberOfPushers++;
 					break;
 				case '5':
-				case '6':
 					numberOfBombs++;
 					break;
 				default:
 					break;
 				}
 			}
-			girderPosition.resize(numberOfGirders);
-			pusherPosition.resize(numberOfPushers);
-			pusherEnd.resize(numberOfPushers);
-			holePosition.resize(numberOfBombs);
-			bombPosition.resize(numberOfBombs);
+		}
+		girderPosition.resize(numberOfGirders);
+		pusherPosition.resize(numberOfPushers);
+		pusherEnd.resize(numberOfPushers);
+		holePosition.resize(numberOfBombs);
+		bombPosition.resize(numberOfBombs);
+		for(int i = 1; i < line.size(); i++)
+		{
 			for (int a = 0; a < line[i].size(); a++){
 				switch (line[i][a])
 				{
