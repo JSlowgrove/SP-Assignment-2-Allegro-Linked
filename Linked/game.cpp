@@ -26,6 +26,7 @@ SAMPLE *win;
 SAMPLE *lose;
 SAMPLE *slide;
 SAMPLE *countdown;
+BITMAP *logo;
 BITMAP *light;
 BITMAP *ground;
 BITMAP *bomb;
@@ -55,8 +56,6 @@ bool axis;
 int direction;
 int timeLeft = 90;
 int currentMusic = 1;
-int mouseX = 0;
-int mouseY = 0;
 int pusherDirection;
 
 int Game::gameStart()
@@ -80,6 +79,7 @@ int Game::gameStart()
 	countdown = load_sample( "countdownBeep.wav" );
 	slide = load_sample( "slide.wav" );
 	ground = load_bitmap( "floor.bmp", NULL );
+	logo = load_bitmap( "linkedLogo.bmp", NULL );
 	bomb = load_bitmap( "bomb.bmp", NULL );
 	hole = load_bitmap( "hole.bmp", NULL );
 	player = load_bitmap( "remotePusher.bmp", NULL );
@@ -111,9 +111,6 @@ int Game::gameStart()
 
 	while(!key[KEY_ESC])
 	{	
-		mouseX = mouse_x;
-		mouseY = mouse_y;
-
 		if(timeLeft == 11)
 		{
 			play_sample( countdown, 255, 128, 1000, 0 );
@@ -160,11 +157,11 @@ int Game::gameStart()
 		/*DISPLAYING IMAGES TO SCREEN USING A DOUBLE BUFFER*/
 		if(mouse_b & 2)
 		{
-			textprintf_ex(buffer, font, mouseX, mouseY, makecol(255,0,0),-1, "right");
+			masked_blit( logo, buffer, 0, 0, mouse_x, mouse_y, 600, 152 );
 		}
 		if(mouse_b & 1)
 		{
-			textprintf_ex(buffer, font, mouseX, mouseY, makecol(255,0,0),-1, "left");
+			masked_blit( logo, buffer, 0, 0, mouse_x, mouse_y, 600, 152 );
 		}
 		enable_hardware_cursor();
 		blit( buffer,screen,0,0,0,0,buffer->w,buffer->h );
