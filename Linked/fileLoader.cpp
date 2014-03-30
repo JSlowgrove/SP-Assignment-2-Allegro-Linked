@@ -1,9 +1,4 @@
 #include "fileLoader.h"
-#include <allegro.h>
-#include <string>
-#include <vector>
-#include <iostream>
-#include <fstream>
 
 FileLoader::FileLoader()
 {	
@@ -25,7 +20,6 @@ void FileLoader::loadFile(std::string fileName)
 	std::ifstream file (fileName);
 	std::vector<std::string> line;
 	std::vector<position> pusherEnd;
-	std::vector<char> temp;
 	line.resize(1);
 	if (file.is_open())
 	{
@@ -185,4 +179,24 @@ int FileLoader::getBombPositionY(int i)
 int FileLoader::getNumberOfLevels()
 {
 	return numberOfLevels;
+}
+
+void FileLoader::setPlayerX(int x)
+{
+	playerXY.x = x;
+}
+
+void FileLoader::setPlayerY(int y)
+{
+	playerXY.y = y;
+}
+
+void FileLoader::setBombPositionX(int i, int x)
+{
+	bombPosition[i].x = x;
+}
+
+void FileLoader::setBombPositionY(int i, int y)
+{
+	bombPosition[i].y = y;
 }

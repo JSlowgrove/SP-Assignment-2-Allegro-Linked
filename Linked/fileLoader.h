@@ -3,8 +3,11 @@
 #define FILELOADER_H
 
 #include <allegro.h>
+#include <allegro.h>
 #include <string>
 #include <vector>
+#include <iostream>
+#include <fstream>
 
 class FileLoader
 {
@@ -42,7 +45,10 @@ class FileLoader
 	int getPusherPositionY(int);
 	int getBombPositionX(int);
 	int getBombPositionY(int);
-	//std::string temp(int);
+	void setPlayerX(int);
+	void setPlayerY(int);
+	void setBombPositionX(int, int);
+	void setBombPositionY(int, int);
 };
 
 #endif

@@ -61,10 +61,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="collisionDetection.h" />
     <ClInclude Include="fileLoader.h" />
     <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="collisionDetection.cpp" />
     <ClCompile Include="fileLoader.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>

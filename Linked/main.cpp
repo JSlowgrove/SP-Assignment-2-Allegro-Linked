@@ -1,4 +1,5 @@
 #include "fileLoader.h"
+#include "collisionDetection.h"
 #include <allegro.h>
 #include <vector>
 
@@ -35,7 +36,6 @@ BITMAP *buffer;//used for double buffering
 FONT *font;
 /*TEMP------------------------------------------------------------------------------*/
 
-volatile position playerXY;
 volatile int playerAnimY;
 volatile int playerAnimX;
 volatile int pusherAnimY;
@@ -43,10 +43,10 @@ volatile int pusherAnimX;
 volatile int bombAnimX;
 volatile int holeAnimX;
 volatile int lightAnimX;
-std::vector<position> bombPosition;
 std::vector<position> pusherPosition;
 int	pusherDirection;
 FileLoader data;
+CollisionDetection collision;
 int moveInt = 0;
 bool axis;
 int direction;
@@ -71,7 +71,6 @@ int main(void)
 	/*LEVEL STARTUP*/
 	data.loadFile("preBuiltLevels.txt");
 	//data.loadFile("customBuiltLevels.txt");
-	bombPosition.resize(data.getBombs());
 	pusherPosition.resize(data.getPushers());
 	/*LEVEL STARTUP*/
 
@@ -94,8 +93,6 @@ int main(void)
 	/*END OF LOAD ASSETS*/
 
 	/*SET INITAL DATA*/
-	playerXY.x = data.getPlayerX();
-	playerXY.y = data.getPlayerY();
 	playerAnimY = 0;
 	playerAnimX = 0;
 	pusherAnimY = 32;
@@ -113,14 +110,6 @@ int main(void)
 		pusherPosition[i].y = data.getPusherPositionY(i);
 	}
 	/*END SET PUSHER START*/
-
-	/*SET BOMB START*/
-	for(int i = 0; i < data.getBombs(); i++)
-	{
-		bombPosition[i].x = data.getBombPositionX(i);
-		bombPosition[i].y = data.getBombPositionY(i);
-	}
-	/*END SET BOMB START*/
 
 	/*START TIMERS*/
 	install_int( bombAnim,100 );
@@ -160,11 +149,11 @@ int main(void)
 			}
 			for (int i = 0;i < data.getBombs(); i++)
 			{
-				masked_blit( bomb,buffer, bombAnimX, 0, bombPosition[i].x, bombPosition[i].y, 32, 32 );
+				masked_blit( bomb,buffer, bombAnimX, 0, data.getBombPositionX(i), data.getBombPositionY(i), 32, 32 );
 			}
 			for (int i = 0;i < data.getBombs(); i++)
 			{
-				masked_blit( light,buffer, lightAnimX, 0, bombPosition[i].x, bombPosition[i].y, 32, 32 );
+				masked_blit( light,buffer, lightAnimX, 0, data.getBombPositionX(i), data.getBombPositionY(i), 32, 32 );
 			}
 			for (int i = 0;i < data.getGirders(); i++)
 			{
@@ -174,7 +163,7 @@ int main(void)
 			{
 				masked_blit( pusher,buffer, pusherAnimX, pusherAnimY, pusherPosition[i].x, pusherPosition[i].y, 32, 32 );
 			}
-			masked_blit( player,buffer, playerAnimX, playerAnimY, playerXY.x, playerXY.y, 32, 32 );
+			masked_blit( player,buffer, playerAnimX, playerAnimY, data.getPlayerX(), data.getPlayerY(), 32, 32 );
 			textprintf_ex(buffer, font, 300, 36, makecol(255,0,0),-1, "%i", timeLeft);
 		}
 		/*DISPLAYING IMAGES TO SCREEN USING A DOUBLE BUFFER*/
@@ -206,45 +195,6 @@ int main(void)
 }
 END_OF_MAIN()
 
-int boundingBox(int object1X, int object1Y, int object1Width, int object1Height, int object2X, int object2Y, int object2Width, int object2Height)//made using http://wiki.allegro.cc/index.php?title=Bounding_Box
-{ 
-    if ((object1X > object2X + object2Width - 1) || // check if object 1 is to the right of object 2
-        (object1Y > object2Y + object2Height - 1) || // check if object 1 is under object 2
-        (object2X > object1X + object1Width - 1) || // check if object 2 is to the right of object 1
-        (object2Y > object1Y + object1Height - 1))   // check if object 2 is under object 1
-    {
-        // no collision
-        return 0;
-    }
- 
-    // collision
-    return 1;
-}
-
-bool collision(int index, int x1, int y1, int w1, int h1, int typeOfCollison, int w2, int h2)
-{
-	int x2,y2;
-	bool crash = false;
-	for (int i = 0; i < index; i++)
-	{
-		switch(typeOfCollison)
-		{
-		case 0:
-			x2 = data.getGirderPositionX(i);
-			y2 = data.getGirderPositionY(i);
-			break;
-		case 1:
-			x2 = bombPosition[i].x;
-			y2 = bombPosition[i].y;
-			break;
-		}
-		if(boundingBox(x1, y1, w1, h1, x2, y2, w2, h2) == 1)
-		{
-			crash = true;
-		}
-	}
-	return crash;
-}
 
 void movePusherX()
 {
@@ -275,13 +225,13 @@ void movePlayer()
 		switch(axis)
 		{
 			case false:
-				playerXY.x+=direction;
+				data.setPlayerX(data.getPlayerX()+direction);
 				break;
 			case true:
-				playerXY.y+=direction;					
+				data.setPlayerY(data.getPlayerY()+direction);					
 				break;
 		}
-		if(collision(66,playerXY.x, playerXY.y, 32, 32, 0, 32, 32) == false)
+		if(collision.collision(data.getGirders(),data.getPlayerX(), data.getPlayerY(), 32, 32, 0, 32, 32, data) == false)
 		{
 		}
 		else
@@ -289,14 +239,14 @@ void movePlayer()
 			switch(axis)
 			{
 				case false:
-					playerXY.x-=direction;
+					data.setPlayerX(data.getPlayerX()-direction);
 					break;
 				case true:
-					playerXY.y-=direction;					
+					data.setPlayerY(data.getPlayerY()-direction);				
 					break;
 			}
 		}
-		if(collision(2,playerXY.x, playerXY.y, 32, 32, 1, 32, 32) == false)//bomb collision check
+		if(collision.collision(data.getBombs(),data.getPlayerX(), data.getPlayerY(), 32, 32, 1, 32, 32, data) == false)//bomb collision check
 		{
 			lightAnimX = 0;
 		}
@@ -307,7 +257,7 @@ void movePlayer()
 				switch(axis)
 				{
 					case false:
-						bombPosition[i].x+=direction;
+						data.setBombPositionX(i,data.getBombPositionX(i)+direction);
 						switch(direction)
 						{
 						case -1:
@@ -319,7 +269,7 @@ void movePlayer()
 						}
 						break;
 					case true:
-						bombPosition[i].y+=direction;
+						data.setBombPositionY(i,data.getBombPositionY(i)+direction);
 						switch(direction)
 						{
 						case -1:
@@ -335,7 +285,8 @@ void movePlayer()
 				{
 					play_sample( slide, 255, 128, 1000, 0 );
 				}
-				if(collision(66,bombPosition[i].x, bombPosition[i].y, 32, 32, 0, 32, 32) == false && collision(1, bombPosition[1].x, bombPosition[1].y, 32, 32, 1, 32, 32) == false) //bomb girder collision check and bomb bomb collision check
+				if(collision.collision(data.getGirders(),data.getBombPositionX(1), data.getBombPositionX(1), 32, 32, 0, 32, 32, data) == false && 
+					collision.collision(data.getBombs(), data.getBombPositionX(1), data.getBombPositionX(1), 32, 32, 1, 32, 32, data) == false) //bomb girder collision check and bomb bomb collision check
 				{
 				}
 				else
@@ -343,12 +294,12 @@ void movePlayer()
 					switch(axis)
 					{
 						case false:
-							bombPosition[i].x-=direction;
-							playerXY.x-=direction;
+							data.setBombPositionX(i,data.getBombPositionX(i)-direction);
+							data.setPlayerX(data.getPlayerX()-direction);
 							break;
 						case true:
-							bombPosition[i].y-=direction;
-							playerXY.y-=direction;
+							data.setBombPositionY(i,data.getBombPositionY(i)-direction);
+							data.setPlayerY(data.getPlayerY()-direction);
 							break;
 					}
 				}
@@ -430,18 +381,12 @@ void respondToKeyboard()
 	if(key[KEY_R])
 	{
 		/*RESET GAME*/
-		playerXY.x = data.getPlayerX();
-		playerXY.y = data.getPlayerY();
+		data.loadFile("preBuiltLevels.txt");
 		playerAnimY = 0;
 		playerAnimX = 0;
 		bombAnimX = 0;
 		lightAnimX = 0;
 		moveInt = 0;
-		for(int i = 0; i < data.getBombs(); i++)
-		{
-			bombPosition[i].x = data.getBombPositionX(i);
-			bombPosition[i].y = data.getBombPositionY(i);
-		}
 		for(int i = 0; i < data.getPushers(); i++)
 		{
 			pusherPosition[i].x = data.getPusherPositionX(i);
@@ -455,8 +400,8 @@ void respondToKeyboard()
 		for(int i = 0; i < data.getBombs(); i++)
 		{
 			holeAnimX = 32;
-			bombPosition[i].x = 640;
-			bombPosition[i].y = i*32;
+			data.setBombPositionX(i,640);
+			data.setBombPositionY(i,i*32);
 		}
 		//play_sample( win, 128, 128, 1000, 0 );
 		install_int( holeAnim,150 );
