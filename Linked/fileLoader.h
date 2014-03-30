@@ -3,7 +3,6 @@
 #define FILELOADER_H
 
 #include <allegro.h>
-#include <allegro.h>
 #include <string>
 #include <vector>
 #include <iostream>

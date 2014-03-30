@@ -63,12 +63,17 @@
   <ItemGroup>
     <ClInclude Include="collisionDetection.h" />
     <ClInclude Include="fileLoader.h" />
-    <ClInclude Include="resource.h" />
+    <ClInclude Include="game.h" />
+    <ClInclude Include="mainMenu.h" />
+    <ClInclude Include="moveEntity.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="collisionDetection.cpp" />
     <ClCompile Include="fileLoader.cpp" />
+    <ClCompile Include="game.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="mainMenu.cpp" />
+    <ClCompile Include="moveEntity.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

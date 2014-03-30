@@ -1,4 +1,4 @@
-﻿Build started 30/03/2014 19:03:42.
+﻿Build started 30/03/2014 23:19:45.
      1>Project "C:\Users\Jamie\Documents\Visual Studio 2010\Projects\Linked\Linked\Linked.vcxproj" on node 2 (build target(s)).
      1>InitializeBuildStatus:
          Touching "Debug\Linked.unsuccessfulbuild".
@@ -14,4 +14,4 @@
 
 Build succeeded.
 
-Time Elapsed 00:00:00.05
+Time Elapsed 00:00:00.04
