@@ -116,7 +116,7 @@ int main(void)
 		blit( ground,buffer, 0, 0, 0, 0, 640, 480 );		
 		for (int i = 0;i < data.getBombs(); i++)
 		{
-			masked_blit( hole,buffer, holeAnimX, 0, data.getHolePositionX(i), data.getHolePositionY(i), 32, 32 );
+			blit( hole,buffer, holeAnimX, 0, data.getHolePositionX(i), data.getHolePositionY(i), 32, 32 );
 		}
 		for (int i = 0;i < data.getBombs(); i++)
 		{
@@ -388,6 +388,16 @@ void respondToKeyboard()
 			pusherPosition[i].y = data.getPusherPositionY(i);
 		}
 		/*END OF RESET GAME*/
+	}
+	if(key[KEY_B])
+	{
+		for(int i = 0; i < data.getBombs(); i++)
+		{
+			holeAnimX = 32;
+			bombPosition[i].x = 1000 +(i*32);
+			bombPosition[i].y = 1000 +(i*32);
+		}
+		install_int( holeAnim,150 );
 	}
 }
 
