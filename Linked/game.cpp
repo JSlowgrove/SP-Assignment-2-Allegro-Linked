@@ -155,15 +155,6 @@ int Game::gameStart()
 			textprintf_ex(buffer, font, 300, 36, makecol(255,0,0),-1, "%i", timeLeft);
 		}
 		/*DISPLAYING IMAGES TO SCREEN USING A DOUBLE BUFFER*/
-		if(mouse_b & 2)
-		{
-			masked_blit( logo, buffer, 0, 0, mouse_x, mouse_y, 600, 152 );
-		}
-		if(mouse_b & 1)
-		{
-			masked_blit( logo, buffer, 0, 0, mouse_x, mouse_y, 600, 152 );
-		}
-		enable_hardware_cursor();
 		blit( buffer,screen,0,0,0,0,buffer->w,buffer->h );
 		/*END OF DISPLAYING IMAGES TO SCREEN USING A DOUBLE BUFFER*/
 	}
@@ -183,12 +174,13 @@ int Game::gameStart()
 	destroy_bitmap( pusher );
 	destroy_bitmap( girder );
 	destroy_bitmap( light );
+	destroy_bitmap( buffer );
 	remove_int( backgroundMusic );
 	remove_int( bombAnim );
 	remove_int( movePusherX );
 	remove_int( respondToKeyboard );	
 	/*END OF DESTROY DATA*/
-	return 0;
+	return 1;
 }
 
 
