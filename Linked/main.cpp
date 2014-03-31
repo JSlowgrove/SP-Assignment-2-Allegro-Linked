@@ -1,6 +1,5 @@
-#include "fileLoader.h"
-#include "collisionDetection.h"
 #include "game.h"
+#include "credits.h"
 #include "mainMenu.h"
 #include <allegro.h>
 
@@ -17,16 +16,24 @@ int main(void)
 	/*END OF ALLEGRO STARTUP*/
 	Game game;
 	MainMenu menu;
+	Credits creds;
 	int next = 1;
 	while (next != 0)
 	{
-		if (next == 1)
+		switch(next)
 		{
+		case 1:
 			next = menu.menuStart();
-		}
-		else if (next == 2)
-		{
+			//menu = new MainMenu;
+			break;
+		case 2:
 			next = game.gameStart();
+			break;
+		case 3:
+			break;
+		case 4:
+			next = creds.creditsStart();
+			break;
 		}
 	}
 	return 0;

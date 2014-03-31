@@ -62,6 +62,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="collisionDetection.h" />
+    <ClInclude Include="credits.h" />
     <ClInclude Include="fileLoader.h" />
     <ClInclude Include="game.h" />
     <ClInclude Include="mainMenu.h" />
@@ -69,6 +70,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="collisionDetection.cpp" />
+    <ClCompile Include="credits.cpp" />
     <ClCompile Include="fileLoader.cpp" />
     <ClCompile Include="game.cpp" />
     <ClCompile Include="main.cpp" />

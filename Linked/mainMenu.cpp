@@ -88,8 +88,8 @@ int MainMenu::menuStart()
 		textprintf_ex(buffer, font, 280, 290, makecol(0,0,0),-1, "MAP EDITOR");
 		masked_blit( tempSign, buffer, 0, 0, 147, 280, 347, 50 );
 		textprintf_ex(buffer, font, 292, 350, makecol(0,0,0),-1, "CREDITS");
-		masked_blit( tempSign, buffer, 0, 0, 147, 340, 347, 50 );
 		textprintf_ex(buffer, font, 304, 410, makecol(0,0,0),-1, "EXIT");
+		textprintf_ex(buffer, font, 10, 460, makecol(255,255,255),-1, "(c) Jamie Slowgrove 2014");
 
 		show_mouse(buffer);
 
@@ -113,7 +113,7 @@ int MainMenu::menuStart()
 		case 2: //CREDITS
 			if(mouse_b & 1)
 			{
-				//next = 4;
+				next = 4;
 			}
 			break;
 		case 3: //EXIT
