@@ -6,13 +6,8 @@ MainMenu::MainMenu()
 
 int MainMenu::menuStart()
 {
-	int next = -1;
-	int mouseOver;
-	/*TEMP------------------------------------------------------------------------------*/
-	FONT *font = load_font("pongfont.pcx",NULL,NULL);
-	/*TEMP------------------------------------------------------------------------------*/
-
 	/*LOAD ASSETS*/
+	FONT *font = load_font("karmaticArcade.pcx",NULL,NULL);
 	BITMAP *buffer = create_bitmap(SCREEN_W,SCREEN_H);//for double buffer
 	BITMAP *background = load_bitmap( "menuBackground.bmp", NULL );
 	BITMAP *logo = load_bitmap( "linkedLogo.bmp", NULL );
@@ -22,12 +17,13 @@ int MainMenu::menuStart()
 	BITMAP *barBottom = load_bitmap( "barBottom.bmp", NULL );
 	BITMAP *tempSign = load_bitmap( "commingSoon.bmp", NULL );
 	/*END OF LOAD ASSETS*/
-
+	
+	next = -1;
 	barY = 137;
 	barTopX = 39;
 	bTXDirection = 1;
 
-	///void animation(void);
+	//install_int(mousePress, 10);
 	//install_int(animation,100);
 
 	while(next == -1)
@@ -84,11 +80,11 @@ int MainMenu::menuStart()
 		}
 		
 		
-		textprintf_ex(buffer, font, 304, 230, makecol(0,0,0),-1, "PLAY");
-		textprintf_ex(buffer, font, 280, 290, makecol(0,0,0),-1, "MAP EDITOR");
+		textprintf_ex(buffer, font, 289, 230, makecol(0,0,0),-1, "PLAY");
+		textprintf_ex(buffer, font, 250, 290, makecol(0,0,0),-1, "MAP EDITOR");
 		masked_blit( tempSign, buffer, 0, 0, 147, 280, 347, 50 );
-		textprintf_ex(buffer, font, 292, 350, makecol(0,0,0),-1, "CREDITS");
-		textprintf_ex(buffer, font, 304, 410, makecol(0,0,0),-1, "EXIT");
+		textprintf_ex(buffer, font, 266, 350, makecol(0,0,0),-1, "CREDITS");
+		textprintf_ex(buffer, font, 291, 410, makecol(0,0,0),-1, "EXIT");
 		textprintf_ex(buffer, font, 10, 460, makecol(255,255,255),-1, "(c) Jamie Slowgrove 2014");
 
 		show_mouse(buffer);
@@ -96,37 +92,11 @@ int MainMenu::menuStart()
 		/*DISPLAYING IMAGES TO SCREEN USING A DOUBLE BUFFER*/
 		blit( buffer,screen,0,0,0,0,buffer->w,buffer->h );
 		/*END OF DISPLAYING IMAGES TO SCREEN USING A DOUBLE BUFFER*/
-		switch (mouseOver)
-		{
-		case 0: // PLAY
-			if(mouse_b & 1)
-			{
-				next = 2;
-			}
-			break;
-		case 1: // MAP EDITOR
-			if(mouse_b & 1)
-			{
-				//next = 3;
-			}
-			break;
-		case 2: //CREDITS
-			if(mouse_b & 1)
-			{
-				next = 4;
-			}
-			break;
-		case 3: //EXIT
-			if(mouse_b & 1)
-			{
-				next = 0;
-			}
-			break;
-		}
 	}
 
 	/*DESTROY DATA*/
 	show_mouse(NULL);
+	destroy_font(font);
 	destroy_bitmap( tempSign );
 	destroy_bitmap( barBottom );
 	destroy_bitmap( barMiddle );
@@ -140,8 +110,38 @@ int MainMenu::menuStart()
 	return next;
 }
 
-/*
-void animation()
+void MainMenu::mousePress()
+{
+	switch (mouseOver)
+	{
+	case 0: // PLAY
+		if(mouse_b & 1)
+		{
+			next = 2;
+		}
+		break;
+	case 1: // MAP EDITOR
+		if(mouse_b & 1)
+		{
+			//next = 3;
+		}
+		break;
+	case 2: //CREDITS
+		if(mouse_b & 1)
+		{
+			next = 4;
+		}
+		break;
+	case 3: //EXIT
+		if(mouse_b & 1)
+		{
+			next = 0;
+		}
+		break;
+	}
+}
+
+void MainMenu::animation()
 {
 	if(barTopX > 660)
 	{
@@ -152,4 +152,4 @@ void animation()
 		bTXDirection = 1;
 	}
 	barTopX+=bTXDirection;
-}*/
+}

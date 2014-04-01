@@ -10,9 +10,13 @@ private:
 	int barY;
 	int barTopX;
 	int bTXDirection;
+	int next;
+	int mouseOver;
 public:
 	MainMenu();
 	int menuStart();
+	void animation();
+	void mousePress();
 };
 
 #endif

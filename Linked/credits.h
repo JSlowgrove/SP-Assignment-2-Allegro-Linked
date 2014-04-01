@@ -7,7 +7,8 @@
 class Credits
 {
 private:
-
+	int next;
+	int mouseOver;
 public:
 	Credits();
 	int creditsStart();

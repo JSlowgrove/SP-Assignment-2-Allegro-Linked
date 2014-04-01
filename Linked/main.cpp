@@ -24,7 +24,6 @@ int main(void)
 		{
 		case 1:
 			next = menu.menuStart();
-			//menu = new MainMenu;
 			break;
 		case 2:
 			next = game.gameStart();

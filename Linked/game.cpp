@@ -35,10 +35,7 @@ BITMAP *player;
 BITMAP *pusher;
 BITMAP *girder;
 BITMAP *buffer;//used for double buffering
-
-/*TEMP------------------------------------------------------------------------------*/
 FONT *font;
-/*TEMP------------------------------------------------------------------------------*/
 
 volatile int playerAnimY;
 volatile int playerAnimX;
@@ -60,16 +57,12 @@ int pusherDirection;
 
 int Game::gameStart()
 {
-
-	/*TEMP------------------------------------------------------------------------------*/
-	font = load_font("pongfont.pcx",NULL,NULL);
-	/*TEMP------------------------------------------------------------------------------*/
-
 	/*LEVEL STARTUP*/
 	data.loadFile(fileName);
 	/*LEVEL STARTUP*/
 
 	/*LOAD ASSETS*/
+	font = load_font("karmaticArcade.pcx",NULL,NULL);
 	buffer = create_bitmap(SCREEN_W,SCREEN_H);//for double buffer
 	musicPart1 = load_sample( "killingTime1.wav" );
 	musicPart2 = load_sample( "killingTime2.wav" );
@@ -152,7 +145,7 @@ int Game::gameStart()
 				masked_blit( pusher,buffer, pusherAnimX, pusherAnimY, data.getPusherPositionX(i), data.getPusherPositionY(i), 32, 32 );
 			}
 			masked_blit( player,buffer, playerAnimX, playerAnimY, data.getPlayerX(), data.getPlayerY(), 32, 32 );
-			textprintf_ex(buffer, font, 300, 36, makecol(255,0,0),-1, "%i", timeLeft);
+			textprintf_ex(buffer, font, 308, 6, makecol(255,0,0),-1, "%i", timeLeft);
 		}
 		/*DISPLAYING IMAGES TO SCREEN USING A DOUBLE BUFFER*/
 		blit( buffer,screen,0,0,0,0,buffer->w,buffer->h );
@@ -160,6 +153,7 @@ int Game::gameStart()
 	}
 
 	/*DESTROY DATA*/
+	destroy_font(font);
 	destroy_sample( lose );
 	destroy_sample( win );
 	destroy_sample( countdown );
