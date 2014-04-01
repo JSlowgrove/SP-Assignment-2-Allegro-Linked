@@ -8,6 +8,7 @@ class Credits
 {
 private:
 	int next;
+	int buttonPressed;
 	int mouseOver;
 public:
 	Credits();

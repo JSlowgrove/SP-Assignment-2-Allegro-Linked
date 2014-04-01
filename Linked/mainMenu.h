@@ -7,16 +7,12 @@
 class MainMenu
 {
 private:
-	int barY;
-	int barTopX;
-	int bTXDirection;
 	int next;
+	int buttonPressed;
 	int mouseOver;
 public:
 	MainMenu();
 	int menuStart();
-	void animation();
-	void mousePress();
 };
 
 #endif

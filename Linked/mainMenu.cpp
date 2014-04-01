@@ -1,5 +1,11 @@
 #include "mainMenu.h"
 
+/*GLOBALS FOR USE WITH TIMERS*/
+int barTopX;
+int bTXDirection;
+int barY;
+/*GLOBALS FOR USE WITH TIMERS*/
+
 MainMenu::MainMenu()
 {	
 }
@@ -19,12 +25,13 @@ int MainMenu::menuStart()
 	/*END OF LOAD ASSETS*/
 	
 	next = -1;
+	buttonPressed = -1;
+	mouseOver;
 	barY = 137;
 	barTopX = 39;
 	bTXDirection = 1;
-
-	//install_int(mousePress, 10);
-	//install_int(animation,100);
+	void animation(void);
+	install_int(animation,10);
 
 	while(next == -1)
 	{	
@@ -92,6 +99,41 @@ int MainMenu::menuStart()
 		/*DISPLAYING IMAGES TO SCREEN USING A DOUBLE BUFFER*/
 		blit( buffer,screen,0,0,0,0,buffer->w,buffer->h );
 		/*END OF DISPLAYING IMAGES TO SCREEN USING A DOUBLE BUFFER*/
+
+		switch (mouseOver)
+		{
+		case 0: // PLAY
+			if(mouse_b & 1)
+			{
+				buttonPressed = 2;
+			}
+			break;
+		case 1: // MAP EDITOR
+			if(mouse_b & 1)
+			{
+				//buttonPressed = 3;
+			}
+			break;
+		case 2: //CREDITS
+			if(mouse_b & 1)
+			{
+				buttonPressed = 4;
+			}
+			break;
+		case 3: //EXIT
+			if(mouse_b & 1)
+			{
+				buttonPressed = 0;
+			}
+			break;
+		default:
+			buttonPressed = -1;
+			break;
+		}
+		if (buttonPressed != -1 && !(mouse_b & 1))
+		{
+			next = buttonPressed;
+		}
 	}
 
 	/*DESTROY DATA*/
@@ -105,43 +147,12 @@ int MainMenu::menuStart()
 	destroy_bitmap( logo );
 	destroy_bitmap( background );
 	destroy_bitmap( buffer );
-	//remove_int( animation );	
+	remove_int( animation );
 	/*END OF DESTROY DATA*/
 	return next;
 }
 
-void MainMenu::mousePress()
-{
-	switch (mouseOver)
-	{
-	case 0: // PLAY
-		if(mouse_b & 1)
-		{
-			next = 2;
-		}
-		break;
-	case 1: // MAP EDITOR
-		if(mouse_b & 1)
-		{
-			//next = 3;
-		}
-		break;
-	case 2: //CREDITS
-		if(mouse_b & 1)
-		{
-			next = 4;
-		}
-		break;
-	case 3: //EXIT
-		if(mouse_b & 1)
-		{
-			next = 0;
-		}
-		break;
-	}
-}
-
-void MainMenu::animation()
+void animation()
 {
 	if(barTopX > 660)
 	{

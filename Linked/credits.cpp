@@ -15,6 +15,8 @@ int Credits::creditsStart()
 	/*END OF LOAD ASSETS*/
 	
 	next = -1;
+	buttonPressed = -1;
+	mouseOver;
 	
 	while(next == -1)
 	{	
@@ -54,12 +56,22 @@ int Credits::creditsStart()
 		/*DISPLAYING IMAGES TO SCREEN USING A DOUBLE BUFFER*/
 		blit( buffer,screen,0,0,0,0,buffer->w,buffer->h );
 		/*END OF DISPLAYING IMAGES TO SCREEN USING A DOUBLE BUFFER*/
+
 		if(mouseOver == 0)
 		{
 			if(mouse_b & 1)
 			{
-				next = 1;
+				buttonPressed = 1;
 			}
+		}
+		else
+		{
+			buttonPressed = -1;
+		}
+
+		if (buttonPressed != -1 && !(mouse_b & 1))
+		{
+			next = buttonPressed;
 		}
 	}
 	/*DESTROY DATA*/
