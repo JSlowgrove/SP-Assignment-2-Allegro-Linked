@@ -18,10 +18,6 @@ void holeAnim(void);
 void movePlayer32(void);
 void movePusherX(void);
 void countingDown(void);
-void backgroundMusic(void);
-SAMPLE *musicPart1;
-SAMPLE *musicPart2;
-SAMPLE *musicPart3;
 SAMPLE *win;
 SAMPLE *lose;
 SAMPLE *slide;
@@ -36,7 +32,6 @@ BITMAP *pusher;
 BITMAP *girder;
 BITMAP *buffer;//used for double buffering
 FONT *font;
-
 volatile int playerAnimY;
 volatile int playerAnimX;
 volatile int pusherAnimY;
@@ -52,21 +47,19 @@ int moveInt = 0;
 bool axis;
 int direction;
 int timeLeft = 90;
-int currentMusic = 1;
 int pusherDirection;
+int tempLevel;
 
 int Game::gameStart()
 {
 	/*LEVEL STARTUP*/
-	data.loadFile(fileName);
+	tempLevel = data.getNumberOfLevels(fileName);
+	data.loadFile(fileName, tempLevel);
 	/*LEVEL STARTUP*/
 
 	/*LOAD ASSETS*/
 	font = load_font("karmaticArcade.pcx",NULL,NULL);
 	buffer = create_bitmap(SCREEN_W,SCREEN_H);//for double buffer
-	musicPart1 = load_sample( "killingTime1.wav" );
-	musicPart2 = load_sample( "killingTime2.wav" );
-	musicPart3 = load_sample( "killingTime3.wav" );
 	lose = load_sample( "lose.wav" );
 	win = load_sample( "win.wav" );
 	countdown = load_sample( "countdownBeep.wav" );
@@ -97,10 +90,7 @@ int Game::gameStart()
 	install_int( respondToKeyboard,10 );
 	install_int( movePusherX,10 );
 	install_int( countingDown,1000 );
-	install_int( backgroundMusic,68023 );
 	/*END OF START TIMERS*/
-
-	play_sample( musicPart1, 255, 128, 1000, 0 );
 
 	while(!key[KEY_ESC])
 	{	
@@ -158,9 +148,6 @@ int Game::gameStart()
 	destroy_sample( win );
 	destroy_sample( countdown );
 	destroy_sample( slide );
-	destroy_sample( musicPart1 );
-	destroy_sample( musicPart2 );
-	destroy_sample( musicPart3 );
 	destroy_bitmap( ground );
 	destroy_bitmap( bomb );
 	destroy_bitmap( hole );
@@ -169,7 +156,6 @@ int Game::gameStart()
 	destroy_bitmap( girder );
 	destroy_bitmap( light );
 	destroy_bitmap( buffer );
-	remove_int( backgroundMusic );
 	remove_int( bombAnim );
 	remove_int( movePusherX );
 	remove_int( respondToKeyboard );	
@@ -363,7 +349,7 @@ void respondToKeyboard()
 	if(key[KEY_R])
 	{
 		/*RESET GAME*/
-		data.loadFile(fileName);
+		data.loadFile(fileName, tempLevel);
 		playerAnimY = 0;
 		playerAnimX = 0;
 		bombAnimX = 0;
@@ -406,21 +392,3 @@ void countingDown()
 	timeLeft--;
 }
 
-void backgroundMusic()
-{
-	switch(currentMusic)
-	{
-	case 0:
-		play_sample( musicPart1, 255, 128, 1000, 0 );
-		currentMusic = 1;
-		break;
-	case 1:
-		play_sample( musicPart2, 255, 128, 1000, 0 );
-		currentMusic = 2;
-		break;
-	case 2:
-		play_sample( musicPart3, 255, 128, 1000, 0 );
-		currentMusic = 0;
-		break;
-	}
-}

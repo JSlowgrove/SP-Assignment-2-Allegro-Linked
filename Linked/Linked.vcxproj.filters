@@ -33,6 +33,9 @@
     <ClInclude Include="credits.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="gameChoice.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -54,6 +57,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="credits.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="gameChoice.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

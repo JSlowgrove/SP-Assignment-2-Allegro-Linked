@@ -5,7 +5,7 @@ FileLoader::FileLoader()
 	
 }
 
-void FileLoader::loadFile(std::string fileName)
+void FileLoader::loadFile(std::string fileName, int level)
 {
 	//number of levels in file. KEY:none=0/girder=1/playerSpawn=2/pusherSpawn=3/pusherEnd=4/bomb=5/endPoint=6
 	numberOfBombs = 0;
@@ -20,20 +20,23 @@ void FileLoader::loadFile(std::string fileName)
 	std::ifstream file (fileName);
 	std::vector<std::string> line;
 	std::vector<position> pusherEnd;
-	line.resize(1);
 	if (file.is_open())
 	{
-		int i = 0;
-		while ( getline (file,line[i]) )
+		int i = -1, count = 0;
+		std::string temp;
+		while ( getline (file,temp) )
 		{
-			i++;
-			line.resize(i+1);
+			count++;
+			if (count >= ( (level - 1) * 15 ) + level && count <= ( (level - 1) * 15 ) + (15 + level))
+			{
+				i++;
+				line.resize(i+1);
+				line[i] = temp;
+			}
 		}
 		file.close();
-		
-		numberOfLevels = atoi(line[0].c_str());
 
-		for(int i = 1; i < line.size(); i++)
+		for(int i = 0; i < line.size(); i++)
 		{
 			for (int a = 0; a < line[i].size(); a++){
 				switch (line[i][a])
@@ -57,7 +60,7 @@ void FileLoader::loadFile(std::string fileName)
 		pusherEnd.resize(numberOfPushers);
 		holePosition.resize(numberOfBombs);
 		bombPosition.resize(numberOfBombs);
-		for(int i = 1; i < line.size(); i++)
+		for(int i = 0; i < line.size(); i++)
 		{
 			for (int a = 0; a < line[i].size(); a++){
 				switch (line[i][a])
@@ -109,6 +112,19 @@ void FileLoader::loadFile(std::string fileName)
 	}
 
 	else std::cout << "Unable to open file"; 
+}
+
+int FileLoader::getNumberOfLevels(std::string fileName)
+{
+	std::ifstream file (fileName);
+	std::string temp;
+	if (file.is_open())
+	{
+		getline (file,temp);
+		file.close();
+	}
+	numberOfLevels = atoi(temp.c_str());
+	return numberOfLevels;
 }
 
 int FileLoader::getBombs()
@@ -184,11 +200,6 @@ int FileLoader::getBombPositionX(int i)
 int FileLoader::getBombPositionY(int i)
 {
 	return bombPosition[i].y;
-}
-
-int FileLoader::getNumberOfLevels()
-{
-	return numberOfLevels;
 }
 
 void FileLoader::setPlayerX(int x)

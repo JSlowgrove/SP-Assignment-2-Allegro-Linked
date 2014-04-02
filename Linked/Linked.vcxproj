@@ -65,6 +65,7 @@
     <ClInclude Include="credits.h" />
     <ClInclude Include="fileLoader.h" />
     <ClInclude Include="game.h" />
+    <ClInclude Include="gameChoice.h" />
     <ClInclude Include="mainMenu.h" />
     <ClInclude Include="moveEntity.h" />
   </ItemGroup>
@@ -73,6 +74,7 @@
     <ClCompile Include="credits.cpp" />
     <ClCompile Include="fileLoader.cpp" />
     <ClCompile Include="game.cpp" />
+    <ClCompile Include="gameChoice.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="mainMenu.cpp" />
     <ClCompile Include="moveEntity.cpp" />

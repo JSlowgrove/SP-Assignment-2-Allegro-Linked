@@ -3,6 +3,7 @@
 #define MAIN_MENU_H
 
 #include <allegro.h>
+#include <vector>
 
 class MainMenu
 {

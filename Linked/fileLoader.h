@@ -29,12 +29,12 @@ private:
 	std::vector<position> bombPosition;
 public:
 	FileLoader();
-	void loadFile(std::string);
+	void loadFile(std::string,int);
+	int getNumberOfLevels(std::string);
 	int getBombs();
 	int getGirders();
 	int getPusherRange();
 	int getPushers();
-	int getNumberOfLevels();
 	int getPlayerX();
 	int getPlayerY();
 	int getHolePositionX(int);
