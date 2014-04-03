@@ -93,6 +93,21 @@ int Game::gameStart(std::string tempFileName, int tempLevel)
 		}
 		else
 		{
+			if(data.getBombPositionX(0) == data.getHolePositionX(0) && data.getBombPositionY(0) == data.getHolePositionY(0) &&
+				data.getBombPositionX(1) == data.getHolePositionX(1) && data.getBombPositionY(1) == data.getHolePositionY(1) ||
+				data.getBombPositionX(0) == data.getHolePositionX(0) && data.getBombPositionY(1) == data.getHolePositionY(1) &&
+				data.getBombPositionX(1) == data.getHolePositionX(1) && data.getBombPositionY(0) == data.getHolePositionY(0) )
+			{
+				animXY[5]+=32;
+				for(int i = 0; i < data.getBombs(); i++)
+				{
+					animXY[6] = 32;
+					data.setBombPositionX(i,640);
+					data.setBombPositionY(i,i*32);
+				}
+				play_sample( win, 128, 128, 1000, 0 );
+				install_int( holeAnim,150 );
+			}
 			blit( ground,buffer, 0, 0, 0, 0, 640, 480 );		
 			for (int i = 0;i < data.getBombs(); i++)
 			{
@@ -120,6 +135,7 @@ int Game::gameStart(std::string tempFileName, int tempLevel)
 		/*DISPLAYING IMAGES TO SCREEN USING A DOUBLE BUFFER*/
 		blit( buffer,screen,0,0,0,0,buffer->w,buffer->h );
 		/*END OF DISPLAYING IMAGES TO SCREEN USING A DOUBLE BUFFER*/
+
 	}
 
 	/*DESTROY DATA*/
@@ -171,7 +187,6 @@ void movePusherX()
 
 void movePlayer()
 {
-
 	switch(axis)
 	{
 	case false:
@@ -339,17 +354,6 @@ void respondToKeyboard()
 		moveInt = 0;
 		timeLeft = 90;
 		/*END OF RESET GAME*/
-	}
-	if(key[KEY_B])
-	{
-		for(int i = 0; i < data.getBombs(); i++)
-		{
-			animXY[6] = 32;
-			data.setBombPositionX(i,640);
-			data.setBombPositionY(i,i*32);
-		}
-		play_sample( win, 128, 128, 1000, 0 );
-		install_int( holeAnim,150 );
 	}
 }
 
