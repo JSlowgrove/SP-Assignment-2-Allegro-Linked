@@ -44,11 +44,8 @@ int main(void)
 			next = choice.gameChoiceStart();
 			break;
 		case 3:
-			next = game.gameStart();
 			break;
 		case 4:
-			break;
-		case 5:
 			next = creds.creditsStart();
 			break;
 		}

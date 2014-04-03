@@ -1,91 +1,71 @@
-#include "fileLoader.h"
-#include "collisionDetection.h"
 #include "game.h"
 
 Game::Game()
 {	
 }
 
-struct position
-{
-	int x;
-	int y;
-};
-
-void respondToKeyboard(void);
-void bombAnim(void);
-void holeAnim(void);
-void movePlayer32(void);
-void movePusherX(void);
-void countingDown(void);
-SAMPLE *win;
-SAMPLE *lose;
-SAMPLE *slide;
-SAMPLE *countdown;
-BITMAP *logo;
-BITMAP *light;
-BITMAP *ground;
-BITMAP *bomb;
-BITMAP *hole;
-BITMAP *player;
-BITMAP *pusher;
-BITMAP *girder;
-BITMAP *buffer;//used for double buffering
-FONT *font;
-volatile int playerAnimY;
-volatile int playerAnimX;
-volatile int pusherAnimY;
-volatile int pusherAnimX;
-volatile int bombAnimX;
-volatile int holeAnimX;
-volatile int lightAnimX;
+/*GLOBALS FOR USE WITH TIMERS*/
+std::vector<int> animXY; //0 = playerAnimX, 1 = playerAnimY, 2 = pusherAnimX, 3 = pusherAnimY, 4 = bombAnimX, 5 = holeAnimX, 6 = lightAnimX
+std::vector<int> direction;//0 = playerDirection, 1 = pusherDirection
+int timeLeft;
 FileLoader data;
-CollisionDetection collision;
-std::string fileName = "preBuiltLevels.txt";
-//string fileName = "customBuiltLevels.txt";
-int moveInt = 0;
+void movePlayer32(void);
+void holeAnim(void);
+SAMPLE *slide;
+SAMPLE *win;
+std::string fileName;
+int level;
+int moveInt;
 bool axis;
-int direction;
-int timeLeft = 90;
-int pusherDirection;
-int tempLevel;
+CollisionDetection collision;
+/*GLOBALS FOR USE WITH TIMERS*/
 
-int Game::gameStart()
+int Game::gameStart(std::string tempFileName, int tempLevel)
 {
 	/*LEVEL STARTUP*/
-	tempLevel = data.getNumberOfLevels(fileName);
-	data.loadFile(fileName, tempLevel);
+	fileName = tempFileName;
+	level = tempLevel;
+	data.loadFile(fileName, level);
 	/*LEVEL STARTUP*/
 
 	/*LOAD ASSETS*/
-	font = load_font("karmaticArcade.pcx",NULL,NULL);
-	buffer = create_bitmap(SCREEN_W,SCREEN_H);//for double buffer
-	lose = load_sample( "lose.wav" );
-	win = load_sample( "win.wav" );
-	countdown = load_sample( "countdownBeep.wav" );
 	slide = load_sample( "slide.wav" );
-	ground = load_bitmap( "floor.bmp", NULL );
-	logo = load_bitmap( "linkedLogo.bmp", NULL );
-	bomb = load_bitmap( "bomb.bmp", NULL );
-	hole = load_bitmap( "hole.bmp", NULL );
-	player = load_bitmap( "remotePusher.bmp", NULL );
-	pusher = load_bitmap( "pusher.bmp", NULL );
-	girder = load_bitmap( "girder.bmp", NULL );
-	light = load_bitmap( "moveLight.bmp", NULL );
+	win = load_sample( "win.wav" );
+	SAMPLE *lose = load_sample( "lose.wav" );
+	SAMPLE *countdown = load_sample( "countdownBeep.wav" );
+	BITMAP *logo = load_bitmap( "linkedLogo.bmp", NULL );
+	BITMAP *light = load_bitmap( "moveLight.bmp", NULL );
+	BITMAP *ground = load_bitmap( "floor.bmp", NULL );
+	BITMAP *bomb = load_bitmap( "bomb.bmp", NULL );
+	BITMAP *hole = load_bitmap( "hole.bmp", NULL );
+	BITMAP *player = load_bitmap( "remotePusher.bmp", NULL );
+	BITMAP *pusher  = load_bitmap( "pusher.bmp", NULL );
+	BITMAP *girder  = load_bitmap( "girder.bmp", NULL );
+	BITMAP *buffer = create_bitmap(SCREEN_W,SCREEN_H);//used for double buffering
+	FONT *font = load_font("karmaticArcade.pcx",NULL,NULL);
 	/*END OF LOAD ASSETS*/
 
 	/*SET INITAL DATA*/
-	playerAnimY = 0;
-	playerAnimX = 0;
-	pusherAnimY = 32;
-	pusherAnimX = 0;
-	bombAnimX = 0;
-	holeAnimX = 0;
-	lightAnimX = 0;
-	pusherDirection = 1;
+	animXY.resize(7);
+	animXY[0] = 0;
+	animXY[1] = 0;
+	animXY[2] = 0;
+	animXY[3] = 32;
+	animXY[4] = 0;
+	animXY[5] = 0;
+	animXY[6] = 0;
+	direction.resize(2);
+	direction[0] = 0;
+	direction[1] = 1;
+	timeLeft = 90;
+	moveInt = 0;
 	/*END OF SET INITAL DATA*/
 
 	/*START TIMERS*/
+	void bombAnim(void);
+	void respondToKeyboard(void);
+	void movePusherX(void);
+	void countingDown(void);
 	install_int( bombAnim,100 );
 	install_int( respondToKeyboard,10 );
 	install_int( movePusherX,10 );
@@ -116,15 +96,15 @@ int Game::gameStart()
 			blit( ground,buffer, 0, 0, 0, 0, 640, 480 );		
 			for (int i = 0;i < data.getBombs(); i++)
 			{
-				blit( hole,buffer, holeAnimX, 0, data.getHolePositionX(i), data.getHolePositionY(i), 32, 32 );
+				blit( hole,buffer, animXY[5], 0, data.getHolePositionX(i), data.getHolePositionY(i), 32, 32 );
 			}
 			for (int i = 0;i < data.getBombs(); i++)
 			{
-				masked_blit( bomb,buffer, bombAnimX, 0, data.getBombPositionX(i), data.getBombPositionY(i), 32, 32 );
+				masked_blit( bomb,buffer, animXY[4], 0, data.getBombPositionX(i), data.getBombPositionY(i), 32, 32 );
 			}
 			for (int i = 0;i < data.getBombs(); i++)
 			{
-				masked_blit( light,buffer, lightAnimX, 0, data.getBombPositionX(i), data.getBombPositionY(i), 32, 32 );
+				masked_blit( light,buffer, animXY[6], 0, data.getBombPositionX(i), data.getBombPositionY(i), 32, 32 );
 			}
 			for (int i = 0;i < data.getGirders(); i++)
 			{
@@ -132,9 +112,9 @@ int Game::gameStart()
 			}
 			for (int i = 0;i < data.getPushers(); i++)
 			{
-				masked_blit( pusher,buffer, pusherAnimX, pusherAnimY, data.getPusherPositionX(i), data.getPusherPositionY(i), 32, 32 );
+				masked_blit( pusher,buffer, animXY[2], animXY[3], data.getPusherPositionX(i), data.getPusherPositionY(i), 32, 32 );
 			}
-			masked_blit( player,buffer, playerAnimX, playerAnimY, data.getPlayerX(), data.getPlayerY(), 32, 32 );
+			masked_blit( player,buffer, animXY[0], animXY[1], data.getPlayerX(), data.getPlayerY(), 32, 32 );
 			textprintf_ex(buffer, font, 308, 6, makecol(255,0,0),-1, "%i", timeLeft);
 		}
 		/*DISPLAYING IMAGES TO SCREEN USING A DOUBLE BUFFER*/
@@ -143,6 +123,11 @@ int Game::gameStart()
 	}
 
 	/*DESTROY DATA*/
+	remove_int( bombAnim );
+	remove_int( movePusherX );
+	remove_int( respondToKeyboard );
+	animXY.resize(0);
+	direction.resize(0);
 	destroy_font(font);
 	destroy_sample( lose );
 	destroy_sample( win );
@@ -155,34 +140,31 @@ int Game::gameStart()
 	destroy_bitmap( pusher );
 	destroy_bitmap( girder );
 	destroy_bitmap( light );
-	destroy_bitmap( buffer );
-	remove_int( bombAnim );
-	remove_int( movePusherX );
-	remove_int( respondToKeyboard );	
+	destroy_bitmap( buffer );	
 	/*END OF DESTROY DATA*/
 	return 1;
 }
 
 
-	void movePusherX()
+void movePusherX()
 {
 	for(int i = 0; i < data.getPushers(); i++)
 	{
 		if (data.getPusherPositionX(i) > (data.getFirstPusherPositionX(i) + data.getPusherRange()))
 		{
-			pusherDirection = -1;
-			pusherAnimY = 64;
+			direction[1] = -1;
+			animXY[3] = 64;
 		}
 		else if (data.getPusherPositionX(i) < data.getFirstPusherPositionX(i))
 		{
-			pusherDirection = 1;
-			pusherAnimY = 32;
+			direction[1] = 1;
+			animXY[3] = 32;
 		}
-		data.setPusherPositionX(i, data.getPusherPositionX(i) + pusherDirection);
-		pusherAnimX += 32;
-		if(pusherAnimX > 64 )
+		data.setPusherPositionX(i, data.getPusherPositionX(i) + direction[1]);
+		animXY[2] += 32;
+		if(animXY[2] > 64 )
 		{
-			pusherAnimX = 0;
+			animXY[2] = 0;
 		}
 	}
 }
@@ -193,10 +175,10 @@ void movePlayer()
 	switch(axis)
 	{
 	case false:
-		data.setPlayerX(data.getPlayerX()+direction);
+		data.setPlayerX(data.getPlayerX()+direction[0]);
 		break;
 	case true:
-		data.setPlayerY(data.getPlayerY()+direction);					
+		data.setPlayerY(data.getPlayerY()+direction[0]);					
 		break;
 	}
 	if(collision.collision(data.getGirders(),data.getPlayerX(), data.getPlayerY(), 32, 32, 0, 32, 32, data) == false)
@@ -207,16 +189,16 @@ void movePlayer()
 		switch(axis)
 		{
 		case false:
-			data.setPlayerX(data.getPlayerX()-direction);
+			data.setPlayerX(data.getPlayerX()-direction[0]);
 			break;
 		case true:
-			data.setPlayerY(data.getPlayerY()-direction);				
+			data.setPlayerY(data.getPlayerY()-direction[0]);				
 			break;
 		}
 	}
 	if(collision.collision(data.getBombs(),data.getPlayerX(), data.getPlayerY(), 32, 32, 1, 32, 32, data) == false)//bomb collision check
 	{
-		lightAnimX = 0;
+		animXY[6] = 0;
 	}
 	else
 	{
@@ -225,26 +207,26 @@ void movePlayer()
 			switch(axis)
 			{
 			case false:
-				data.setBombPositionX(i,data.getBombPositionX(i)+direction);
-				switch(direction)
+				data.setBombPositionX(i,data.getBombPositionX(i)+direction[0]);
+				switch(direction[0])
 				{
 				case -1:
-					lightAnimX = 96;
+					animXY[6] = 96;
 					break;
 				case 1:
-					lightAnimX = 128;
+					animXY[6] = 128;
 					break;
 				}
 				break;
 			case true:
-				data.setBombPositionY(i,data.getBombPositionY(i)+direction);
-				switch(direction)
+				data.setBombPositionY(i,data.getBombPositionY(i)+direction[0]);
+				switch(direction[0])
 				{
 				case -1:
-					lightAnimX = 32;
+					animXY[6] = 32;
 					break;
 				case 1:
-					lightAnimX = 64;
+					animXY[6] = 64;
 					break;
 				}
 				break;
@@ -262,12 +244,12 @@ void movePlayer()
 				switch(axis)
 				{
 				case false:
-					data.setBombPositionX(i,data.getBombPositionX(i)-direction);
-					data.setPlayerX(data.getPlayerX()-direction);
+					data.setBombPositionX(i,data.getBombPositionX(i)-direction[0]);
+					data.setPlayerX(data.getPlayerX()-direction[0]);
 					break;
 				case true:
-					data.setBombPositionY(i,data.getBombPositionY(i)-direction);
-					data.setPlayerY(data.getPlayerY()-direction);
+					data.setBombPositionY(i,data.getBombPositionY(i)-direction[0]);
+					data.setPlayerY(data.getPlayerY()-direction[0]);
 					break;
 				}
 			}
@@ -277,19 +259,19 @@ void movePlayer()
 
 void bombAnim()
 {
-	bombAnimX+=32;
-	if(bombAnimX>96)
+	animXY[4]+=32;
+	if(animXY[4]>96)
 	{
-		bombAnimX = 0;
+		animXY[4] = 0;
 	}
 }
 
 void holeAnim()
 {
-	holeAnimX+=32;
-	if(holeAnimX>224)
+	animXY[5]+=32;
+	if(animXY[5]>224)
 	{
-		holeAnimX = 0;
+		animXY[5] = 0;
 		remove_int( holeAnim );
 	}
 }
@@ -302,8 +284,8 @@ void respondToKeyboard()
 		if (moveInt == 0)
 		{
 			axis = true;
-			direction = -1;
-			playerAnimY = 0;
+			direction[0] = -1;
+			animXY[1] = 0;
 			install_int( movePlayer32, 10 );
 		}
 		/*END OF UP*/
@@ -314,8 +296,8 @@ void respondToKeyboard()
 		if (moveInt == 0)
 		{
 			axis = true;
-			direction = 1;
-			playerAnimY = 96;
+			direction[0] = 1;
+			animXY[1] = 96;
 			install_int( movePlayer32, 10 );
 		}
 		/*END OF DOWN*/
@@ -327,8 +309,8 @@ void respondToKeyboard()
 		if (moveInt == 0)
 		{
 			axis = false;
-			direction = -1;
-			playerAnimY = 64;
+			direction[0] = -1;
+			animXY[1] = 64;
 			install_int( movePlayer32,10 );
 		}
 		/*END OF LEFT*/
@@ -339,8 +321,8 @@ void respondToKeyboard()
 		if (moveInt == 0)
 		{
 			axis = false;
-			direction = 1;
-			playerAnimY = 32;
+			direction[0] = 1;
+			animXY[1] = 32;
 			install_int( movePlayer32,10 );
 		}
 
@@ -349,11 +331,11 @@ void respondToKeyboard()
 	if(key[KEY_R])
 	{
 		/*RESET GAME*/
-		data.loadFile(fileName, tempLevel);
-		playerAnimY = 0;
-		playerAnimX = 0;
-		bombAnimX = 0;
-		lightAnimX = 0;
+		data.loadFile(fileName, level);
+		animXY[1] = 0;
+		animXY[0] = 0;
+		animXY[4] = 0;
+		animXY[6] = 0;
 		moveInt = 0;
 		timeLeft = 90;
 		/*END OF RESET GAME*/
@@ -362,7 +344,7 @@ void respondToKeyboard()
 	{
 		for(int i = 0; i < data.getBombs(); i++)
 		{
-			holeAnimX = 32;
+			animXY[6] = 32;
 			data.setBombPositionX(i,640);
 			data.setBombPositionY(i,i*32);
 		}
@@ -374,10 +356,10 @@ void respondToKeyboard()
 void movePlayer32()
 {
 	movePlayer();
-	playerAnimX += 32;
-	if(playerAnimX > 64 )
+	animXY[0] += 32;
+	if(animXY[0] > 64 )
 	{
-		playerAnimX = 0;
+		animXY[0] = 0;
 	}
 	moveInt++;
 	if(moveInt==32)

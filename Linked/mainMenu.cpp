@@ -137,13 +137,13 @@ int MainMenu::menuStart()
 		case 1: // MAP EDITOR
 			if(mouse_b & 1)
 			{
-				//buttonPressed = 4;
+				//buttonPressed = 3;
 			}
 			break;
 		case 2: //CREDITS
 			if(mouse_b & 1)
 			{
-				buttonPressed = 5;
+				buttonPressed = 4;
 			}
 			break;
 		case 3: //EXIT

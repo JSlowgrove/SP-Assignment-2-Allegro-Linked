@@ -11,6 +11,7 @@ int GameChoice::gameChoiceStart()
 	BITMAP *buffer = create_bitmap(SCREEN_W,SCREEN_H);//for double buffer
 	BITMAP *background = load_bitmap( "background.bmp", NULL );
 	BITMAP *sign = load_bitmap( "sign.bmp", NULL );
+	BITMAP *bomb = load_bitmap( "bomb.bmp", NULL );
 	/*END OF LOAD ASSETS*/
 
 	next = -1;
@@ -19,13 +20,14 @@ int GameChoice::gameChoiceStart()
 	page = 0;
 	level = 1;
 	fileName;
-	FileLoader data;
+	numberOfLevels;
 
 	while(next == -1)
 	{	
 		mouseOver = -1;
 		masked_blit( background, buffer, 0, 0, 0, 0, 640, 480 );
 
+		/*PAGE 0*************************************************************************/
 		if (page == 0)
 		{
 			textprintf_ex(buffer, font, 160, 38, makecol(0,0,0),-1, "CHOOSE THE LEVEL TYPE");
@@ -55,13 +57,41 @@ int GameChoice::gameChoiceStart()
 			textprintf_ex(buffer, font, 268, 258, makecol(0,0,0),-1, "CUSTOM");
 
 		}
+		/*END OF PAGE 0********************************************************************/
+
+		/*PAGE 1*************************************************************************/
 		else
 		{
 			textprintf_ex(buffer, font, 196, 38, makecol(0,0,0),-1, "CHOOSE THE LEVEL");
+			
+			//for (int i = 0; i < numberOfLevels; i++)
+			if (mouse_x >= 64 && mouse_x <= 96 && mouse_y >= 128 && mouse_y <= 160)
+			{
+				masked_blit( bomb, buffer, 96, 0, 64, 128, 32, 32 );
+				
+				mouseOver = 1;
+				level = 1;
+			}
+			else
+			{
+				masked_blit( bomb, buffer, 0, 0, 64, 128, 32, 32 );
+			}
+			textprintf_ex(buffer, font, 72, 134, makecol(0,0,0),-1, "1");
 
-			data.getNumberOfLevels(fileName);
-			data.loadFile(fileName, level);
+			if (mouse_x >= 128 && mouse_x <= 160 && mouse_y >= 128 && mouse_y <= 160)
+			{
+				masked_blit( bomb, buffer, 96, 0, 128, 128, 32, 32 );
+				mouseOver = 1;
+				level = 2;
+			}
+			else
+			{
+				masked_blit( bomb, buffer, 0, 0, 128, 128, 32, 32 );
+			}
+			textprintf_ex(buffer, font, 136, 134, makecol(0,0,0),-1, "2");
+
 		}
+		/*END OF PAGE 1********************************************************************/
 
 		//check if mouse is over RETURN
 		if (mouse_x >= 147 && mouse_x <= 494 && mouse_y >= 400 && mouse_y <= 450)
@@ -96,6 +126,7 @@ int GameChoice::gameChoiceStart()
 			{
 				page = 1;
 				fileName = "preBuiltLevels.txt";
+				numberOfLevels = data.getNumberOfLevels(fileName);
 			}
 		}
 
@@ -105,6 +136,15 @@ int GameChoice::gameChoiceStart()
 			{
 				page = 1;
 				fileName = "customBuiltLevels.txt";
+				numberOfLevels = data.getNumberOfLevels(fileName);
+			}
+		}
+
+		else if(mouseOver == 1 && page == 1)
+		{
+			if(mouse_b & 1)
+			{
+				buttonPressed = 2;
 			}
 		}
 	
@@ -113,7 +153,7 @@ int GameChoice::gameChoiceStart()
 			buttonPressed = -1;
 		}
 
-		if (buttonPressed != -1 && !(mouse_b & 1))
+		if (buttonPressed == 1 && !(mouse_b & 1))
 		{
 			if (page == 0)
 			{
@@ -124,6 +164,12 @@ int GameChoice::gameChoiceStart()
 				buttonPressed = -1;
 				page = 0;
 			}
+		}
+
+		if (buttonPressed == 2 && !(mouse_b & 1))
+		{
+			data.loadFile(fileName, level);
+			next = game.gameStart(fileName, level);
 		}
 	}
 	/*DESTROY DATA*/

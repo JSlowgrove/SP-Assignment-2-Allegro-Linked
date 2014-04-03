@@ -11,10 +11,14 @@
 class Game
 {
 	private:
-		
+		struct position
+		{
+			int x;
+			int y;
+		};
 	public:
 		Game();
-		int gameStart();
+		int gameStart(std::string, int);
 };
 
 #endif
