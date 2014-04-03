@@ -21,6 +21,8 @@ int GameChoice::gameChoiceStart()
 	level = 1;
 	fileName;
 	numberOfLevels;
+	y = 0;
+	x = 0;
 
 	while(next == -1)
 	{	
@@ -63,33 +65,33 @@ int GameChoice::gameChoiceStart()
 		else
 		{
 			textprintf_ex(buffer, font, 196, 38, makecol(0,0,0),-1, "CHOOSE THE LEVEL");
+			y = 160;
+			x = 64;
+			for (int i = 1; i <= numberOfLevels; i++)
+			{
+				if (mouse_x >= x && mouse_x <= (x + 32) && mouse_y >= y && mouse_y <= (y + 32))
+				{
+					masked_blit( bomb, buffer, 96, 0, x, y, 32, 32 );
+
+					mouseOver = 1;
+					level = i;
+				}
+				else
+				{
+					masked_blit( bomb, buffer, 0, 0, x, y, 32, 32 );
+				}
+				textprintf_ex(buffer, font, (x + 8), (y + 6), makecol(0,0,0),-1, "%i", i);
+				if (y > 576)
+				{
+					x = 64;
+					y += 64;
+				}
+				else
+				{
+					x += 64;
+				}
+			}
 			
-			//for (int i = 0; i < numberOfLevels; i++)
-			if (mouse_x >= 64 && mouse_x <= 96 && mouse_y >= 128 && mouse_y <= 160)
-			{
-				masked_blit( bomb, buffer, 96, 0, 64, 128, 32, 32 );
-				
-				mouseOver = 1;
-				level = 1;
-			}
-			else
-			{
-				masked_blit( bomb, buffer, 0, 0, 64, 128, 32, 32 );
-			}
-			textprintf_ex(buffer, font, 72, 134, makecol(0,0,0),-1, "1");
-
-			if (mouse_x >= 128 && mouse_x <= 160 && mouse_y >= 128 && mouse_y <= 160)
-			{
-				masked_blit( bomb, buffer, 96, 0, 128, 128, 32, 32 );
-				mouseOver = 1;
-				level = 2;
-			}
-			else
-			{
-				masked_blit( bomb, buffer, 0, 0, 128, 128, 32, 32 );
-			}
-			textprintf_ex(buffer, font, 136, 134, makecol(0,0,0),-1, "2");
-
 		}
 		/*END OF PAGE 1********************************************************************/
 

@@ -17,6 +17,8 @@ private:
 	int page;
 	int level;
 	int numberOfLevels;
+	int y;
+	int x;
 	std::string fileName;
 	FileLoader data;
 	Game game;
