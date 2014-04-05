@@ -1,16 +1,17 @@
-﻿Build started 03/04/2014 17:31:28.
+﻿Build started 05/04/2014 16:44:39.
      1>Project "C:\Users\Jamie\Documents\Visual Studio 2010\Projects\Linked\Linked\Linked.vcxproj" on node 2 (build target(s)).
      1>InitializeBuildStatus:
          Touching "Debug\Linked.unsuccessfulbuild".
        ClCompile:
-         C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /Od /Oy- /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc100.pdb" /Gd /TP /analyze- /errorReport:prompt moveEntity.cpp
-         moveEntity.cpp
-     1>c:\users\jamie\documents\visual studio 2010\projects\linked\linked\moveentity.cpp(2): error C2146: syntax error : missing ';' before identifier 'axis'
-     1>c:\users\jamie\documents\visual studio 2010\projects\linked\linked\moveentity.cpp(2): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
-     1>c:\users\jamie\documents\visual studio 2010\projects\linked\linked\moveentity.cpp(2): error C2143: syntax error : missing ';' before 'if'
-     1>c:\users\jamie\documents\visual studio 2010\projects\linked\linked\moveentity.cpp(2): error C4430: missing type specifier - int assumed. Note: C++ does not support default-int
-     1>Done Building Project "C:\Users\Jamie\Documents\Visual Studio 2010\Projects\Linked\Linked\Linked.vcxproj" (build target(s)) -- FAILED.
+         All outputs are up-to-date.
+       Link:
+         All outputs are up-to-date.
+         Linked.vcxproj -> C:\Users\Jamie\Documents\Visual Studio 2010\Projects\Linked\Debug\Linked.exe
+       FinalizeBuildStatus:
+         Deleting file "Debug\Linked.unsuccessfulbuild".
+         Touching "Debug\Linked.lastbuildstate".
+     1>Done Building Project "C:\Users\Jamie\Documents\Visual Studio 2010\Projects\Linked\Linked\Linked.vcxproj" (build target(s)).
 
-Build FAILED.
+Build succeeded.
 
-Time Elapsed 00:00:00.86
+Time Elapsed 00:00:00.05

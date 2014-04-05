@@ -176,6 +176,22 @@ void movePusherX()
 			direction[1] = 1;
 			animXY[3] = 32;
 		}
+		int tmp = 0;
+		for(int a = 0; a < data.getBombs(); a++)
+		{
+			if(collision.collision(data.getBombs(),data.getPusherPositionX(i), data.getPusherPositionY(i), 32, 32, 1, 32, 32, data) == 1)//bomb collision check
+			{
+				tmp = a;
+			}
+		}
+		if (tmp !=0)
+		{
+			int tmp2 = data.getBombPositionX(tmp);
+			if (tmp2 != data.getFirstPusherPositionX(i)-32 && tmp2 != (data.getFirstPusherPositionX(i) + data.getPusherRange())+32)
+			{
+				data.setBombPositionX(tmp, tmp2 + direction[1]);
+			}
+		}
 		data.setPusherPositionX(i, data.getPusherPositionX(i) + direction[1]);
 		animXY[2] += 32;
 		if(animXY[2] > 64 )
@@ -196,7 +212,7 @@ void movePlayer()
 		data.setPlayerY(data.getPlayerY()+direction[0]);					
 		break;
 	}
-	if(collision.collision(data.getGirders(),data.getPlayerX(), data.getPlayerY(), 32, 32, 0, 32, 32, data) == false)
+	if(collision.collision(data.getGirders(),data.getPlayerX(), data.getPlayerY(), 32, 32, 0, 32, 32, data) == 0)
 	{
 	}
 	else
@@ -211,7 +227,7 @@ void movePlayer()
 			break;
 		}
 	}
-	if(collision.collision(data.getBombs(),data.getPlayerX(), data.getPlayerY(), 32, 32, 1, 32, 32, data) == false)//bomb collision check
+	if(collision.collision(data.getBombs(),data.getPlayerX(), data.getPlayerY(), 32, 32, 1, 32, 32, data) == 0)//bomb collision check
 	{
 		animXY[6] = 0;
 	}
@@ -250,8 +266,8 @@ void movePlayer()
 			{
 				play_sample( slide, 255, 128, 1000, 0 );
 			}
-			if(collision.collision(data.getGirders(),data.getBombPositionX(1), data.getBombPositionX(1), 32, 32, 0, 32, 32, data) == false && 
-				collision.collision(data.getBombs(), data.getBombPositionX(1), data.getBombPositionX(1), 32, 32, 1, 32, 32, data) == false) //bomb girder collision check and bomb bomb collision check
+			if(collision.collision(data.getGirders(),data.getBombPositionX(1), data.getBombPositionX(1), 32, 32, 0, 32, 32, data) == 0 && 
+				collision.collision(data.getBombs(), data.getBombPositionX(1), data.getBombPositionX(1), 32, 32, 1, 32, 32, data) == 0) //bomb girder collision check and bomb bomb collision check
 			{
 			}
 			else
