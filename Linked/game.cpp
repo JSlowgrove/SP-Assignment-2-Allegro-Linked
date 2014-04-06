@@ -34,7 +34,7 @@ int Game::gameStart(std::string tempFileName, int tempLevel)
 	win = load_sample( "win.wav" );
 	SAMPLE *lose = load_sample( "lose.wav" );
 	SAMPLE *countdown = load_sample( "countdownBeep.wav" );
-	BITMAP *logo = load_bitmap( "linkedLogo.bmp", NULL );
+	BITMAP *countdownBack = load_bitmap( "countdown.bmp", NULL );
 	BITMAP *light = load_bitmap( "moveLight.bmp", NULL );
 	BITMAP *ground = load_bitmap( "floor.bmp", NULL );
 	BITMAP *bomb = load_bitmap( "bomb.bmp", NULL );
@@ -58,7 +58,7 @@ int Game::gameStart(std::string tempFileName, int tempLevel)
 	direction.resize(2);
 	direction[0] = 0;
 	direction[1] = 1;
-	timeLeft = 90;
+	timeLeft = 30;
 	moveInt = 0;
 	/*END OF SET INITAL DATA*/
 
@@ -90,7 +90,7 @@ int Game::gameStart(std::string tempFileName, int tempLevel)
 			remove_int( bombAnim );
 			remove_int( movePusherX );
 			clear_to_color(buffer, makecol(255,0,0));
-			textprintf_ex(buffer, font, 300, 36, makecol(0,0,0),-1, "GAME OVER");
+			textprintf_ex(buffer, font, 250, 36, makecol(0,0,0),-1, "GAME OVER");
 		}
 		else
 		{
@@ -130,8 +130,9 @@ int Game::gameStart(std::string tempFileName, int tempLevel)
 			{
 				masked_blit( pusher,buffer, animXY[2], animXY[3], data.getPusherPositionX(i), data.getPusherPositionY(i), 32, 32 );
 			}
+			masked_blit( countdownBack,buffer, 0, 0, 288, 0, 64, 32 );
 			masked_blit( player,buffer, animXY[0], animXY[1], data.getPlayerX(), data.getPlayerY(), 32, 32 );
-			textprintf_ex(buffer, font, 308, 6, makecol(255,0,0),-1, "%i", timeLeft);
+			textprintf_ex(buffer, font, 304, 8, makecol(255,0,0),-1, "%i", timeLeft);
 		}
 		/*DISPLAYING IMAGES TO SCREEN USING A DOUBLE BUFFER*/
 		blit( buffer,screen,0,0,0,0,buffer->w,buffer->h );
@@ -150,6 +151,7 @@ int Game::gameStart(std::string tempFileName, int tempLevel)
 	destroy_sample( win );
 	destroy_sample( countdown );
 	destroy_sample( slide );
+	destroy_bitmap( countdownBack );
 	destroy_bitmap( ground );
 	destroy_bitmap( bomb );
 	destroy_bitmap( hole );
@@ -376,12 +378,24 @@ void respondToKeyboard()
 
 void movePlayer32()
 {
-	int collisionPG = collision.collision(data.getGirders(),data.getPlayerX(), data.getPlayerY(), 32, 32, 0, 32, 32, data);
-	int collisionPB = collision.collision(data.getBombs(),data.getPlayerX(), data.getPlayerY(), 32, 32, 1, 32, 32, data);
-	int collisionPPu = collision.collision(data.getPushers(),data.getPlayerX(), data.getPlayerY(), 32, 32, 2, 32, 32, data);
-	move.movePlayer(axis, direction[0], data.getPlayerX(), data.getPlayerY(), collisionPG, collisionPB, collisionPPu);
+	move.setPlayerXY(axis, data.getPlayerX(), data.getPlayerY(), direction[0]);
+	for (int i = 0; i < data.getBombs(); i++)
+	{
+		move.setBombs(i, data.getBombPositionX(i), data.getBombPositionY(i));
+	}
+	move.setCollisions(
+		collision.collision(data.getGirders(),move.getPlayerX(), move.getPlayerY(), 32, 32, 0, 32, 32, data),
+		collision.collision(data.getBombs(),move.getPlayerX(), move.getPlayerY(), 32, 32, 1, 32, 32, data),
+		collision.collision(data.getPushers(),move.getPlayerX(), move.getPlayerY(), 32, 32, 2, 32, 32, data)
+		);
+	move.movePlayer(axis, direction[0]);
 	data.setPlayerX(move.getPlayerX());
 	data.setPlayerY(move.getPlayerY());
+	for (int i = 0; i < data.getBombs(); i++)
+	{
+		data.setBombPositionX(i,move.getBombX(i));
+		data.setBombPositionY(i,move.getBombY(i));
+	}
 	animXY[0] += 32;
 	if(animXY[0] > 64 )
 	{

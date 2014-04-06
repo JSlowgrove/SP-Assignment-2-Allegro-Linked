@@ -5,7 +5,7 @@ MoveEntity::MoveEntity()
 
 }
 
-void MoveEntity::movePlayer(int axis, int direction, int tmpX, int tmpY, int collisionPG, int collisionPB, int collisionPPu)
+void MoveEntity::setPlayerXY(int axis, int tmpX, int tmpY, int direction)
 {
 	switch(axis)
 	{
@@ -18,6 +18,24 @@ void MoveEntity::movePlayer(int axis, int direction, int tmpX, int tmpY, int col
 		y = tmpY + direction;	
 		break;
 	}
+}
+
+void MoveEntity::setBombs(int i, int tmpX, int tmpY)
+{
+	bombsXY.resize(i+1);
+	bombsXY[i].x = tmpX;
+	bombsXY[i].y = tmpY;
+}
+
+void MoveEntity::setCollisions(int pG, int pB, int pPu)
+{
+	collisionPG = pG;
+	collisionPB = pB;
+	collisionPPu = pPu;
+}
+
+void MoveEntity::movePlayer(int axis, int direction)
+{
 	if(collisionPG == 0)//girder collision check
 	{
 	}
@@ -26,10 +44,10 @@ void MoveEntity::movePlayer(int axis, int direction, int tmpX, int tmpY, int col
 		switch(axis)
 		{
 		case false:
-			x = x - direction;
+			x -= direction;
 			break;
 		case true:
-			y = y - direction;			
+			y -= direction;			
 			break;
 		}
 	}
@@ -38,14 +56,17 @@ void MoveEntity::movePlayer(int axis, int direction, int tmpX, int tmpY, int col
 	}
 	else
 	{
-		switch(axis)
+		for (int i = 0; i < 2; i++)
 		{
-		case false:
-			x = x - direction;
-			break;
-		case true:
-			y = y - direction;			
-			break;
+			switch(axis)
+			{
+			case false:
+				bombsXY[i].x += direction;
+				break;
+			case true:
+				bombsXY[i].y += direction;			
+				break;
+			}
 		}
 	}
 	if(collisionPPu == 0)//pusher collision check
@@ -56,10 +77,10 @@ void MoveEntity::movePlayer(int axis, int direction, int tmpX, int tmpY, int col
 		switch(axis)
 		{
 		case false:
-			x = x - direction;
+			x -= direction;
 			break;
 		case true:
-			y = y - direction;			
+			y -= direction;			
 			break;
 		}
 	}
@@ -73,4 +94,14 @@ int MoveEntity::getPlayerX()
 int MoveEntity::getPlayerY()
 {
 	return y;
+}
+
+int MoveEntity::getBombX(int i)
+{
+	return bombsXY[i].x;
+}
+
+int MoveEntity::getBombY(int i)
+{
+	return bombsXY[i].y;
 }
