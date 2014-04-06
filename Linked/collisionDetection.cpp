@@ -34,6 +34,10 @@ int CollisionDetection::collision(int index, int x1, int y1, int w1, int h1, int
 			x2 = data.getBombPositionX(i);;
 			y2 = data.getBombPositionY(i);;
 			break;
+		case 2:
+			x2 = data.getPusherPositionX(i);;
+			y2 = data.getPusherPositionY(i);;
+			break;
 		}
 		if(boundingBox(x1, y1, w1, h1, x2, y2, w2, h2) == 1)
 		{

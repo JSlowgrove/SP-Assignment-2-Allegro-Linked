@@ -9,6 +9,7 @@ std::vector<int> animXY; //0 = playerAnimX, 1 = playerAnimY, 2 = pusherAnimX, 3 
 std::vector<int> direction;//0 = playerDirection, 1 = pusherDirection
 int timeLeft;
 FileLoader data;
+MoveEntity move;
 void movePlayer32(void);
 void holeAnim(void);
 SAMPLE *slide;
@@ -201,7 +202,7 @@ void movePusherX()
 	}
 }
 
-void movePlayer()
+/*void movePlayer()
 {
 	switch(axis)
 	{
@@ -286,7 +287,7 @@ void movePlayer()
 			}
 		}
 	}
-}
+}*/
 
 void bombAnim()
 {
@@ -375,7 +376,12 @@ void respondToKeyboard()
 
 void movePlayer32()
 {
-	movePlayer();
+	int collisionPG = collision.collision(data.getGirders(),data.getPlayerX(), data.getPlayerY(), 32, 32, 0, 32, 32, data);
+	int collisionPB = collision.collision(data.getBombs(),data.getPlayerX(), data.getPlayerY(), 32, 32, 1, 32, 32, data);
+	int collisionPPu = collision.collision(data.getPushers(),data.getPlayerX(), data.getPlayerY(), 32, 32, 2, 32, 32, data);
+	move.movePlayer(axis, direction[0], data.getPlayerX(), data.getPlayerY(), collisionPG, collisionPB, collisionPPu);
+	data.setPlayerX(move.getPlayerX());
+	data.setPlayerY(move.getPlayerY());
 	animXY[0] += 32;
 	if(animXY[0] > 64 )
 	{
