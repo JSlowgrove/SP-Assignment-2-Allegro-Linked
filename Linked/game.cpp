@@ -18,7 +18,9 @@ std::string fileName;
 int level;
 int moveInt;
 bool axis;
+bool winTest;
 CollisionDetection collision;
+int winTime;
 /*GLOBALS FOR USE WITH TIMERS*/
 
 int Game::gameStart(std::string tempFileName, int tempLevel)
@@ -41,6 +43,7 @@ int Game::gameStart(std::string tempFileName, int tempLevel)
 	BITMAP *light = load_bitmap( "moveLight.bmp", NULL );
 	BITMAP *ground = load_bitmap( "floor.bmp", NULL );
 	BITMAP *loseGround = load_bitmap( "gameOverBackground.bmp", NULL );
+	BITMAP *winGround = load_bitmap( "winBackground.bmp", NULL );
 	BITMAP *bomb = load_bitmap( "bomb.bmp", NULL );
 	BITMAP *hole = load_bitmap( "hole.bmp", NULL );
 	BITMAP *player = load_bitmap( "remotePusher.bmp", NULL );
@@ -62,8 +65,9 @@ int Game::gameStart(std::string tempFileName, int tempLevel)
 	direction.resize(2);
 	direction[0] = 0;
 	direction[1] = 1;
-	timeLeft = 5;
+	timeLeft = 30;
 	moveInt = 0;
+	winTest = false;
 	/*END OF SET INITAL DATA*/
 
 	/*START TIMERS*/
@@ -90,8 +94,17 @@ int Game::gameStart(std::string tempFileName, int tempLevel)
 		}
 		if(timeLeft < 0)
 		{
-			blit( loseGround,buffer, 0, 0, 0, 0, 640, 480 );
-			textprintf_ex(buffer, font, 250, 36, makecol(0,0,0),-1, "GAME OVER");
+			if (winTest)
+			{
+				blit( winGround,buffer, 0, 0, 0, 0, 640, 480 );
+				textprintf_ex(buffer, font, 250, 36, makecol(0,0,0),-1, "SUCCESS!");
+				textprintf_ex(buffer, font, 200, 68, makecol(0,0,0),-1, "TIME REMAINING %i", winTime);
+			}
+			else
+			{
+				blit( loseGround,buffer, 0, 0, 0, 0, 640, 480 );
+				textprintf_ex(buffer, font, 250, 36, makecol(0,0,0),-1, "GAME OVER");
+			}
 			masked_blit( resetHelp,buffer, 0, 0, 188, 160, resetHelp->w, resetHelp->h );
 			masked_blit( exitHelp,buffer, 0, 0, 188, 224, exitHelp->w, exitHelp->h );
 		}
@@ -316,6 +329,9 @@ void holeAnim()
 	{
 		animXY[5] = 0;
 		remove_int( holeAnim );
+		winTime = timeLeft;
+		timeLeft = -1;
+		winTest  = true;
 	}
 }
 
