@@ -34,6 +34,8 @@ int Game::gameStart(std::string tempFileName, int tempLevel)
 	win = load_sample( "win.wav" );
 	SAMPLE *lose = load_sample( "lose.wav" );
 	SAMPLE *countdown = load_sample( "countdownBeep.wav" );
+	BITMAP *resetHelp = load_bitmap( "restartHelp.bmp", NULL );
+	BITMAP *exitHelp = load_bitmap( "quitHelp.bmp", NULL );
 	BITMAP *countdownBack = load_bitmap( "countdown.bmp", NULL );
 	BITMAP *light = load_bitmap( "moveLight.bmp", NULL );
 	BITMAP *ground = load_bitmap( "floor.bmp", NULL );
@@ -82,13 +84,10 @@ int Game::gameStart(std::string tempFileName, int tempLevel)
 		if(timeLeft == 0)
 		{
 			play_sample( lose, 255, 128, 1000, 0 );
-			remove_int( countingDown );
-			timeLeft = -1053;//lose
+			timeLeft = -1;
 		}
 		if(timeLeft < 0)
 		{
-			remove_int( bombAnim );
-			remove_int( movePusherX );
 			clear_to_color(buffer, makecol(255,0,0));
 			textprintf_ex(buffer, font, 250, 36, makecol(0,0,0),-1, "GAME OVER");
 		}
@@ -131,6 +130,8 @@ int Game::gameStart(std::string tempFileName, int tempLevel)
 				masked_blit( pusher,buffer, animXY[2], animXY[3], data.getPusherPositionX(i), data.getPusherPositionY(i), 32, 32 );
 			}
 			masked_blit( countdownBack,buffer, 0, 0, 288, 0, 64, 32 );
+			masked_blit( resetHelp,buffer, 0, 0, 32, 0, resetHelp->w, resetHelp->h );
+			masked_blit( exitHelp,buffer, 0, 0, 160, 0, exitHelp->w, exitHelp->h );
 			masked_blit( player,buffer, animXY[0], animXY[1], data.getPlayerX(), data.getPlayerY(), 32, 32 );
 			textprintf_ex(buffer, font, 304, 8, makecol(255,0,0),-1, "%i", timeLeft);
 		}
@@ -141,6 +142,7 @@ int Game::gameStart(std::string tempFileName, int tempLevel)
 	}
 
 	/*DESTROY DATA*/
+	remove_int( countingDown );
 	remove_int( bombAnim );
 	remove_int( movePusherX );
 	remove_int( respondToKeyboard );
@@ -155,6 +157,8 @@ int Game::gameStart(std::string tempFileName, int tempLevel)
 	destroy_bitmap( ground );
 	destroy_bitmap( bomb );
 	destroy_bitmap( hole );
+	destroy_bitmap( resetHelp );
+	destroy_bitmap( exitHelp );
 	destroy_bitmap( player );
 	destroy_bitmap( pusher );
 	destroy_bitmap( girder );
@@ -371,7 +375,7 @@ void respondToKeyboard()
 		animXY[4] = 0;
 		animXY[6] = 0;
 		moveInt = 0;
-		timeLeft = 90;
+		timeLeft = 30;
 		/*END OF RESET GAME*/
 	}
 }
