@@ -36,9 +36,11 @@ int Game::gameStart(std::string tempFileName, int tempLevel)
 	SAMPLE *countdown = load_sample( "countdownBeep.wav" );
 	BITMAP *resetHelp = load_bitmap( "restartHelp.bmp", NULL );
 	BITMAP *exitHelp = load_bitmap( "quitHelp.bmp", NULL );
+	BITMAP *moveHelp = load_bitmap( "moveHelp.bmp", NULL );
 	BITMAP *countdownBack = load_bitmap( "countdown.bmp", NULL );
 	BITMAP *light = load_bitmap( "moveLight.bmp", NULL );
 	BITMAP *ground = load_bitmap( "floor.bmp", NULL );
+	BITMAP *loseGround = load_bitmap( "gameOverBackground.bmp", NULL );
 	BITMAP *bomb = load_bitmap( "bomb.bmp", NULL );
 	BITMAP *hole = load_bitmap( "hole.bmp", NULL );
 	BITMAP *player = load_bitmap( "remotePusher.bmp", NULL );
@@ -60,7 +62,7 @@ int Game::gameStart(std::string tempFileName, int tempLevel)
 	direction.resize(2);
 	direction[0] = 0;
 	direction[1] = 1;
-	timeLeft = 30;
+	timeLeft = 5;
 	moveInt = 0;
 	/*END OF SET INITAL DATA*/
 
@@ -88,8 +90,10 @@ int Game::gameStart(std::string tempFileName, int tempLevel)
 		}
 		if(timeLeft < 0)
 		{
-			clear_to_color(buffer, makecol(255,0,0));
+			blit( loseGround,buffer, 0, 0, 0, 0, 640, 480 );
 			textprintf_ex(buffer, font, 250, 36, makecol(0,0,0),-1, "GAME OVER");
+			masked_blit( resetHelp,buffer, 0, 0, 188, 160, resetHelp->w, resetHelp->h );
+			masked_blit( exitHelp,buffer, 0, 0, 188, 224, exitHelp->w, exitHelp->h );
 		}
 		else
 		{
@@ -132,6 +136,7 @@ int Game::gameStart(std::string tempFileName, int tempLevel)
 			masked_blit( countdownBack,buffer, 0, 0, 288, 0, 64, 32 );
 			masked_blit( resetHelp,buffer, 0, 0, 32, 0, resetHelp->w, resetHelp->h );
 			masked_blit( exitHelp,buffer, 0, 0, 160, 0, exitHelp->w, exitHelp->h );
+			masked_blit( moveHelp,buffer, 0, 0, 96, 448, moveHelp->w, moveHelp->h );
 			masked_blit( player,buffer, animXY[0], animXY[1], data.getPlayerX(), data.getPlayerY(), 32, 32 );
 			textprintf_ex(buffer, font, 304, 8, makecol(255,0,0),-1, "%i", timeLeft);
 		}
