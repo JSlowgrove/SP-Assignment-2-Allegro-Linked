@@ -3,7 +3,6 @@
 #define GAME_H
 
 #include "fileLoader.h"
-#include "collisionDetection.h"
 #include "moveEntity.h"
 #include <allegro.h>
 #include <vector>

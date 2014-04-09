@@ -19,7 +19,6 @@ int level;
 int moveInt;
 bool axis;
 bool winTest;
-CollisionDetection collision;
 int winTime;
 /*GLOBALS FOR USE WITH TIMERS*/
 
@@ -205,7 +204,7 @@ void movePusherX()
 			direction[1] = 1;
 			animXY[3] = 32;
 		}
-		int tmp = 0;
+	/*	int tmp = 0;
 		for(int a = 0; a < data.getBombs(); a++)
 		{
 			if(collision.collision(data.getBombs(),data.getPusherPositionX(i), data.getPusherPositionY(i), 32, 32, 1, 32, 32, data) == 1)//bomb collision check
@@ -220,7 +219,7 @@ void movePusherX()
 			{
 				data.setBombPositionX(tmp, tmp2 + direction[1]);
 			}
-		}
+		}*/
 		data.setPusherPositionX(i, data.getPusherPositionX(i) + direction[1]);
 		animXY[2] += 32;
 		if(animXY[2] > 64 )
@@ -412,12 +411,13 @@ void movePlayer32()
 	{
 		move.setBombs(i, data.getBombPositionX(i), data.getBombPositionY(i));
 	}
-	move.setCollisions(
-		collision.collision(data.getGirders(),move.getPlayerX(), move.getPlayerY(), 32, 32, 0, 32, 32, data),
-		collision.collision(data.getBombs(),move.getPlayerX(), move.getPlayerY(), 32, 32, 1, 32, 32, data),
-		collision.collision(data.getPushers(),move.getPlayerX(), move.getPlayerY(), 32, 32, 2, 32, 32, data)
-		);
+	move.setCollisions(data);
 	move.movePlayer(axis, direction[0]);
+	animXY[6] = move.getLightAnim();
+	if (animXY[6] != 0 && moveInt == 0)
+	{
+		play_sample( slide, 255, 128, 1000, 0 );
+	}
 	data.setPlayerX(move.getPlayerX());
 	data.setPlayerY(move.getPlayerY());
 	for (int i = 0; i < data.getBombs(); i++)
