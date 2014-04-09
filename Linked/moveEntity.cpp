@@ -5,162 +5,104 @@ MoveEntity::MoveEntity()
 
 }
 
-void MoveEntity::setPlayerXY(int axis, int tmpX, int tmpY, int direction)
+void MoveEntity::movePlayer(int axis, int direction, FileLoader data)
 {
-	switch(axis)
-	{
-	case false:
-		player.x = tmpX + direction;
-		player.y = tmpY;
-		break;
-	case true:
-		player.x = tmpX;
-		player.y = tmpY + direction;	
-		break;
-	}
-}
-
-void MoveEntity::setBombs(int i, int tmpX, int tmpY)
-{
-	bombsXY.resize(i+1);
-	bombsXY[i].x = tmpX;
-	bombsXY[i].y = tmpY;
-}
-
-void MoveEntity::setCollisions(FileLoader data)
-{
-	collisionPG = CollisionDetection::collision(data.getGirders(),player.x, player.y, 32, 32, 0, 32, 32, data);
-	collisionPB = CollisionDetection::collision(data.getBombs(), player.x, player.y, 32, 32, 1, 32, 32, data);
-	collisionPPu = CollisionDetection::collision(data.getPushers(), player.x, player.y, 32, 32, 2, 32, 32, data);
-	collisionBB = CollisionDetection::collision(1, data.getBombPositionX(1), data.getBombPositionY(1), 32, 32, 1, 32, 32, data);
-	collisionBG.resize(data.getBombs());
-	collisionBPu.resize(data.getBombs());
-	for (int i = 0; i < data.getBombs(); i++)
-	{
-		collisionBG[i] = CollisionDetection::collision(data.getGirders(), data.getBombPositionX(i), data.getBombPositionY(i), 32, 32, 0, 32, 32, data);
-		collisionBPu[i] = CollisionDetection::collision(data.getPushers(), data.getBombPositionX(i), data.getBombPositionY(i), 32, 32, 2, 32, 32, data);
-	}
-}
-
-void MoveEntity::movePlayer(int axis, int direction)
-{
-	if(collisionPG == 0)//girder collision check
-	{
-		lightAnim = 0;
-	}
-	else
 	{
 		switch(axis)
 		{
 		case false:
-			player.x -= direction;
+			data.setPlayerX(data.getPlayerX()+direction);
 			break;
 		case true:
-			player.y -= direction;			
+			data.setPlayerY(data.getPlayerY()+direction);					
 			break;
 		}
-	}
-	if(collisionPB == 0)//bomb collision check
-	{
-	}
-	else
-	{
-		if (direction == -1 && axis == false)
+		if(collision(data.getGirders(),data.getPlayerX(), data.getPlayerY(), 32, 32, 0, 32, 32, data) == 0)
 		{
-			lightAnim = 96;
 		}
-		else if (direction == 1 && axis == false)
+		else
 		{
-			lightAnim = 128;
+			switch(axis)
+			{
+			case false:
+				data.setPlayerX(data.getPlayerX()-direction);
+				break;
+			case true:
+				data.setPlayerY(data.getPlayerY()-direction);				
+				break;
+			}
 		}
-		if (direction == -1 && axis == true)
+		if(collision(data.getBombs(),data.getPlayerX(), data.getPlayerY(), 32, 32, 1, 32, 32, data) == 0)//bomb collision check
 		{
-			lightAnim = 32;
+			lightAnim = 0;
 		}
-		else if (direction == 1 && axis == true)
+		else
 		{
-			lightAnim = 64;
+			for (int i = 0; i < data.getBombs(); i++)
+			{
+				switch(axis)
+				{
+				case false:
+					data.setBombPositionX(i,data.getBombPositionX(i)+direction);
+					switch(direction)
+					{
+					case -1:
+						lightAnim = 96;
+						break;
+					case 1:
+						lightAnim = 128;
+						break;
+					}
+					break;
+				case true:
+					data.setBombPositionY(i,data.getBombPositionY(i)+direction);
+					switch(direction)
+					{
+					case -1:
+						lightAnim = 32;
+						break;
+					case 1:
+						lightAnim = 64;
+						break;
+					}
+					break;
+				}
+				if(collision(data.getGirders(),data.getBombPositionX(1), data.getBombPositionX(1), 32, 32, 0, 32, 32, data) == 0 && 
+					collision(data.getBombs(), data.getBombPositionX(1), data.getBombPositionX(1), 32, 32, 1, 32, 32, data) == 0) //bomb girder collision check and bomb bomb collision check
+				{
+				}
+				else
+				{
+					switch(axis)
+					{
+					case false:
+						data.setBombPositionX(i,data.getBombPositionX(i)-direction);
+						data.setPlayerX(data.getPlayerX()-direction);
+						break;
+					case true:
+						data.setBombPositionY(i,data.getBombPositionY(i)-direction);
+						data.setPlayerY(data.getPlayerY()-direction);
+						break;
+					}
+				}
+			}
 		}
-		moveBombs(axis,direction);
-	}
-	if(collisionPPu == 0)//pusher collision check
-	{
-	}
-	else
-	{
+		bombsXY.resize(data.getBombs());
 		switch(axis)
 		{
 		case false:
-			player.x -= direction;
+			player.x = data.getPlayerX();
+			player.y = data.getPlayerY();
 			break;
 		case true:
-			player.y -= direction;			
+			player.x = data.getPlayerX();
+			player.y = data.getPlayerY();					
 			break;
 		}
-	}
-}
-
-void MoveEntity::moveBombs(int axis, int direction)
-{
-	for (int i = 0; i < 2; i++)//( sizeof(collisionBB) / sizeof(collisionBB[0])); i++)
-	{
-		switch(axis)//initial move
+		for (int i = 0; i < 2; i++)
 		{
-		case false:
-			bombsXY[i].x += direction;
-			break;
-		case true:
-			bombsXY[i].y += direction;
-			break;
-		}
-		if(collisionBG[i] == 0)//girder collision check
-		{
-		}
-		else
-		{
-			switch(axis)
-			{
-			case false:
-				bombsXY[i].x -= direction;
-				player.x -= direction;
-				break;
-			case true:
-				bombsXY[i].y -= direction;	
-				player.y -= direction;
-				break;
-			}
-		}
-		if(collisionBB == 0)//bomb collision check
-		{
-		}
-		else
-		{
-			switch(axis)
-			{
-			case false:
-				bombsXY[i].x -= direction;
-				player.x -= direction;
-				break;
-			case true:
-				bombsXY[i].y -= direction;
-				player.y -= direction;
-				break;
-			}
-		}
-		if(collisionBPu[i] == 0)//pusher collision check
-		{
-		}
-		else
-		{
-			switch(axis)
-			{
-			case false:
-				bombsXY[i].x -= direction;
-				break;
-			case true:
-				bombsXY[i].y -= direction;			
-				break;
-			}
+			bombsXY[i].x = data.getBombPositionX(i);
+			bombsXY[i].y = data.getBombPositionY(i);
 		}
 	}
 }

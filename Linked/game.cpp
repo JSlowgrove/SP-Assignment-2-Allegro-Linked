@@ -204,10 +204,10 @@ void movePusherX()
 			direction[1] = 1;
 			animXY[3] = 32;
 		}
-	/*	int tmp = 0;
+		int tmp = 0;
 		for(int a = 0; a < data.getBombs(); a++)
 		{
-			if(collision.collision(data.getBombs(),data.getPusherPositionX(i), data.getPusherPositionY(i), 32, 32, 1, 32, 32, data) == 1)//bomb collision check
+			if(move.collision(data.getBombs(),data.getPusherPositionX(i), data.getPusherPositionY(i), 32, 32, 1, 32, 32, data) == 1)//bomb collision check
 			{
 				tmp = a;
 			}
@@ -219,7 +219,7 @@ void movePusherX()
 			{
 				data.setBombPositionX(tmp, tmp2 + direction[1]);
 			}
-		}*/
+		}
 		data.setPusherPositionX(i, data.getPusherPositionX(i) + direction[1]);
 		animXY[2] += 32;
 		if(animXY[2] > 64 )
@@ -228,93 +228,6 @@ void movePusherX()
 		}
 	}
 }
-
-/*void movePlayer()
-{
-	switch(axis)
-	{
-	case false:
-		data.setPlayerX(data.getPlayerX()+direction[0]);
-		break;
-	case true:
-		data.setPlayerY(data.getPlayerY()+direction[0]);					
-		break;
-	}
-	if(collision.collision(data.getGirders(),data.getPlayerX(), data.getPlayerY(), 32, 32, 0, 32, 32, data) == 0)
-	{
-	}
-	else
-	{
-		switch(axis)
-		{
-		case false:
-			data.setPlayerX(data.getPlayerX()-direction[0]);
-			break;
-		case true:
-			data.setPlayerY(data.getPlayerY()-direction[0]);				
-			break;
-		}
-	}
-	if(collision.collision(data.getBombs(),data.getPlayerX(), data.getPlayerY(), 32, 32, 1, 32, 32, data) == 0)//bomb collision check
-	{
-		animXY[6] = 0;
-	}
-	else
-	{
-		for (int i = 0; i < 2; i++)
-		{
-			switch(axis)
-			{
-			case false:
-				data.setBombPositionX(i,data.getBombPositionX(i)+direction[0]);
-				switch(direction[0])
-				{
-				case -1:
-					animXY[6] = 96;
-					break;
-				case 1:
-					animXY[6] = 128;
-					break;
-				}
-				break;
-			case true:
-				data.setBombPositionY(i,data.getBombPositionY(i)+direction[0]);
-				switch(direction[0])
-				{
-				case -1:
-					animXY[6] = 32;
-					break;
-				case 1:
-					animXY[6] = 64;
-					break;
-				}
-				break;
-			}
-			if (moveInt == 0)
-			{
-				play_sample( slide, 255, 128, 1000, 0 );
-			}
-			if(collision.collision(data.getGirders(),data.getBombPositionX(1), data.getBombPositionX(1), 32, 32, 0, 32, 32, data) == 0 && 
-				collision.collision(data.getBombs(), data.getBombPositionX(1), data.getBombPositionX(1), 32, 32, 1, 32, 32, data) == 0) //bomb girder collision check and bomb bomb collision check
-			{
-			}
-			else
-			{
-				switch(axis)
-				{
-				case false:
-					data.setBombPositionX(i,data.getBombPositionX(i)-direction[0]);
-					data.setPlayerX(data.getPlayerX()-direction[0]);
-					break;
-				case true:
-					data.setBombPositionY(i,data.getBombPositionY(i)-direction[0]);
-					data.setPlayerY(data.getPlayerY()-direction[0]);
-					break;
-				}
-			}
-		}
-	}
-}*/
 
 void bombAnim()
 {
@@ -406,13 +319,7 @@ void respondToKeyboard()
 
 void movePlayer32()
 {
-	move.setPlayerXY(axis, data.getPlayerX(), data.getPlayerY(), direction[0]);
-	for (int i = 0; i < data.getBombs(); i++)
-	{
-		move.setBombs(i, data.getBombPositionX(i), data.getBombPositionY(i));
-	}
-	move.setCollisions(data);
-	move.movePlayer(axis, direction[0]);
+	move.movePlayer(axis, direction[0], data);
 	animXY[6] = move.getLightAnim();
 	if (animXY[6] != 0 && moveInt == 0)
 	{

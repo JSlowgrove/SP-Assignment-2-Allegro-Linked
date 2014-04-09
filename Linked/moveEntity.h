@@ -15,21 +15,11 @@ private:
 		int y;
 	};
 	position player;
-	int collisionPG;
-	int collisionPB;
-	int collisionPPu;
-	int collisionBB;
 	int lightAnim;
 	std::vector<position> bombsXY;
-	std::vector<int> collisionBG;
-	std::vector<int> collisionBPu;
-	void moveBombs(int, int);
 public:
 	MoveEntity();
-	void setPlayerXY(int,int,int,int);
-	void setBombs(int, int, int);
-	void setCollisions(FileLoader);
-	void movePlayer(int, int);
+	void movePlayer(int, int, FileLoader);
 	int getPlayerX();
 	int getPlayerY();
 	int getBombX(int);
