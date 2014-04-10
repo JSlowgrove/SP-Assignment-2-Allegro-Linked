@@ -161,6 +161,10 @@ int Game::gameStart(std::string tempFileName, int tempLevel)
 	}
 
 	/*DESTROY DATA*/
+	if(moveInt !=0)
+	{
+		remove_int( movePlayer32 );
+	}
 	remove_int( countingDown );
 	remove_int( bombAnim );
 	remove_int( movePusherX );

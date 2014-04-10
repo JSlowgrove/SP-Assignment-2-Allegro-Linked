@@ -38,7 +38,7 @@ void MoveEntity::movePlayer(int axis, int direction, FileLoader data)
 		}
 		else
 		{
-			for (int i = 0; i < data.getBombs(); i++)
+			for (int i = 0; i < 1; i++)
 			{
 				switch(axis)
 				{
@@ -67,12 +67,13 @@ void MoveEntity::movePlayer(int axis, int direction, FileLoader data)
 					}
 					break;
 				}
-				if(collision(data.getGirders(),data.getBombPositionX(1), data.getBombPositionX(1), 32, 32, 0, 32, 32, data) == 0 && 
-					collision(data.getBombs(), data.getBombPositionX(1), data.getBombPositionX(1), 32, 32, 1, 32, 32, data) == 0) //bomb girder collision check and bomb bomb collision check
+				if(collision(data.getGirders(),data.getBombPositionX(i), data.getBombPositionY(i), 32, 32, 0, 32, 32, data) == 0 &&
+					collision(1, data.getBombPositionX(1), data.getBombPositionY(1), 32, 32, 1, 32, 32, data) == 0)//bomb girder collision check and bomb bomb collision check
 				{
 				}
 				else
 				{
+
 					switch(axis)
 					{
 					case false:
@@ -83,8 +84,25 @@ void MoveEntity::movePlayer(int axis, int direction, FileLoader data)
 						data.setBombPositionY(i,data.getBombPositionY(i)-direction);
 						data.setPlayerY(data.getPlayerY()-direction);
 						break;
-					}
+					}					
 				}
+			/*	if (collision(1, data.getBombPositionX(1), data.getBombPositionY(1), 32, 32, 1, 32, 32, data) == 0)
+				{
+				}
+				else
+				{
+					switch(axis)
+					{
+					case false:
+						data.setBombPositionX(i,data.getBombPositionX(i)-direction);
+						//data.setPlayerX(data.getPlayerX()-direction);
+						break;
+					case true:
+						data.setBombPositionY(i,data.getBombPositionY(i)-direction);
+						//data.setPlayerY(data.getPlayerY()-direction);
+						break;
+					}
+				}*/
 			}
 		}
 		bombsXY.resize(data.getBombs());
