@@ -7,3 +7,13 @@ music:
 [killingTime] Kevin MacLeod (incompetech.com) 
 Licensed under Creative Commons: By Attribution 3.0
 http://creativecommons.org/licenses/by/3.0/
+http://www.1001freefonts.com/karmatic_arcade.font
+
+OTHER HELP:
+pong tutorial
+http://msdn.microsoft.com/en-us/library/h6227113.aspx
+http://www.cplusplus.com/doc/tutorial/classes/
+http://www.cplusplus.com/doc/tutorial/inheritance/
+http://wiki.allegro.cc/index.php?title=Bounding_Box
+http://www.cplusplus.com/forum/beginner/8388/
+http://www.cplusplus.com/doc/tutorial/files/

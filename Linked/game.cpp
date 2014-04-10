@@ -110,10 +110,8 @@ int Game::gameStart(std::string tempFileName, int tempLevel)
 		}
 		else
 		{
-			if(data.getBombPositionX(0) == data.getHolePositionX(0) && data.getBombPositionY(0) == data.getHolePositionY(0) &&
-				data.getBombPositionX(1) == data.getHolePositionX(1) && data.getBombPositionY(1) == data.getHolePositionY(1) ||
-				data.getBombPositionX(0) == data.getHolePositionX(0) && data.getBombPositionY(1) == data.getHolePositionY(1) &&
-				data.getBombPositionX(1) == data.getHolePositionX(1) && data.getBombPositionY(0) == data.getHolePositionY(0) )
+			if(move.collision(data.getBombs(), data.getHolePositionX(0), data.getHolePositionY(0), 32, 32, 1, 32, 32, data) != 0 &&
+				move.collision(data.getBombs(), data.getHolePositionX(1), data.getHolePositionY(1), 32, 32, 1, 32, 32, data) != 0 && moveInt == 0)
 			{
 				animXY[5]+=32;
 				for(int i = 0; i < data.getBombs(); i++)
@@ -198,12 +196,12 @@ void movePusherX()
 {
 	for(int i = 0; i < data.getPushers(); i++)
 	{
-		if (data.getPusherPositionX(i) > (data.getFirstPusherPositionX(i) + data.getPusherRange()))
+		if (data.getPusherPositionX(i) >= (data.getFirstPusherPositionX(i) + data.getPusherRange()))
 		{
 			direction[1] = -1;
 			animXY[3] = 64;
 		}
-		else if (data.getPusherPositionX(i) < data.getFirstPusherPositionX(i))
+		else if (data.getPusherPositionX(i) <= data.getFirstPusherPositionX(i))
 		{
 			direction[1] = 1;
 			animXY[3] = 32;
