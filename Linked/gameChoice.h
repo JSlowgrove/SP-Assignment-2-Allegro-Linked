@@ -20,10 +20,11 @@ private:
 	int y;
 	int x;
 	std::string fileName;
-	FileLoader data;
-	Game game;
+	FileLoader *data;//declares a pointer to an instance of the FileLoader class
+	Game *game;//declares a pointer to an instance of the Game class
 public:
 	GameChoice();
+	~GameChoice();
 	int gameChoiceStart();
 };
 
