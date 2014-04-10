@@ -13,6 +13,7 @@ private:
 	int mouseOver;
 public:
 	MainMenu();
+	~MainMenu();
 	int menuStart();
 };
 

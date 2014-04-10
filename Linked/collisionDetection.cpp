@@ -1,6 +1,11 @@
 #include "collisionDetection.h"
 
-CollisionDetection::CollisionDetection()
+CollisionDetection::CollisionDetection() //Constructor
+{	
+
+}
+
+CollisionDetection::~CollisionDetection() //De-constructor
 {	
 
 }
@@ -22,27 +27,32 @@ int CollisionDetection::boundingBox(int object1X, int object1Y, int object1Width
 int CollisionDetection::collision(int index, int x1, int y1, int w1, int h1, int typeOfCollison, int w2, int h2, FileLoader data)
 {
 	int x2,y2;
+
+	/*Loop for the index passed in*****************************************************/
 	for (int i = 0; i < index; i++)
 	{
-		switch(typeOfCollison)
+		switch(typeOfCollison)//check the value passed into typeOfCollison
 		{
-		case 0:
+		case 0://if 0 the check is against girders so set the value of x2, and y2 to the position of the girder with the current index
 			x2 = data.getGirderPositionX(i);
 			y2 = data.getGirderPositionY(i);
 			break;
-		case 1:
+		case 1://if 1 the check is against bombs so set the value of x2, and y2 to the position of the bomb with the current index
 			x2 = data.getBombPositionX(i);
 			y2 = data.getBombPositionY(i);
 			break;
-		case 2:
+		case 2://if 0 the check is against pushers so set the value of x2, and y2 to the position of the pusher with the current index
 			x2 = data.getPusherPositionX(i);
 			y2 = data.getPusherPositionY(i);
 			break;
 		}
-		if(boundingBox(x1, y1, w1, h1, x2, y2, w2, h2) == 1)
+
+		if(boundingBox(x1, y1, w1, h1, x2, y2, w2, h2) == 1)//check if the loaded object is colliding with the original object, if so end the function with the returned value of 1
 		{
 			return 1;
 		}
 	}
-	return 0;
+	/*End loop for the index passed in*****************************************************/
+
+	return 0;//no collision
 }

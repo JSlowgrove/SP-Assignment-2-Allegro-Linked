@@ -11,13 +11,14 @@
 class Game
 {
 private:
-	struct position
+	struct position //structure for coordinates of an entity
 	{
 		int x;
 		int y;
 	};
 public:
 	Game();
+	~Game();
 	int gameStart(std::string, int);
 };
 

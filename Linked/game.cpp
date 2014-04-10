@@ -1,6 +1,10 @@
 #include "game.h"
 
-Game::Game()
+Game::Game()//constructor
+{	
+}
+
+Game::~Game()//De-constructor
 {	
 }
 

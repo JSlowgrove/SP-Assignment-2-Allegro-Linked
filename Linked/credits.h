@@ -12,6 +12,7 @@ private:
 	int mouseOver;
 public:
 	Credits();
+	~Credits();
 	int creditsStart();
 };
 

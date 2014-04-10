@@ -2,7 +2,6 @@
 #ifndef FILELOADER_H
 #define FILELOADER_H
 
-#include <allegro.h>
 #include <string>
 #include <vector>
 #include <iostream>
@@ -11,7 +10,7 @@
 class FileLoader
 {
 private:
-	struct position
+	struct position //a structure for coordinates of an entity
 	{
 		int x;
 		int y;
@@ -29,6 +28,7 @@ private:
 	std::vector<position> bombPosition;
 public:
 	FileLoader();
+	~FileLoader();
 	void loadFile(std::string,int);
 	int getNumberOfLevels(std::string);
 	int getBombs();

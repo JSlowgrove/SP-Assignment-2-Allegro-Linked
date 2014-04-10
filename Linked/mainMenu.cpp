@@ -12,7 +12,11 @@ void pickupAnim(int);
 void moveBotAnim(int i,int dir);
 /*GLOBALS FOR USE WITH TIMERS*/
 
-MainMenu::MainMenu()
+MainMenu::MainMenu() //Constructor
+{	
+}
+
+MainMenu::~MainMenu() //De-constructor
 {	
 }
 
