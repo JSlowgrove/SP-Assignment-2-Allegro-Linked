@@ -337,15 +337,18 @@ void movePusherX()// moves the enemy pusher constantly
 	/*loop for the number of pushers*************************************************************/
 	for(int i = 0; i < data->getPushers(); i++)
 	{
+		int tmpMoveEnd = 0;
 		if (data->getPusherPositionX(i) >= (data->getFirstPusherPositionX(i) + data->getPusherRange())) //check if the pusher is greater then or equal to the maximum point the pusher can go to
 		{
 			direction[1] = -1;//if yes set the direction to -1 and the pusher y animation to 64
 			animXY[3] = 64;
+			tmpMoveEnd = 1;
 		}
 		else if (data->getPusherPositionX(i) <= data->getFirstPusherPositionX(i))// if no check if the pusher is greater then or equal to the minimum point the pusher can go to
 		{
 			direction[1] = 1;//if yes set the direction to 1 and the pusher y animation to 32
 			animXY[3] = 32;
+			tmpMoveEnd = -1;
 		}
 
 		int tmp = 0;
@@ -365,7 +368,14 @@ void movePusherX()// moves the enemy pusher constantly
 			int tmp2 = data->getBombPositionX(tmp);//get the position of the collided bomb
 			if (tmp2 != data->getFirstPusherPositionX(i)-32 && tmp2 != (data->getFirstPusherPositionX(i) + data->getPusherRange())+32)// if the bomb is inside the path of the pusher then move the bomb with the pusher
 			{
-				data->setBombPositionX(tmp, tmp2 + direction[1]);
+				if (tmpMoveEnd == 0 )//check if the pusher has hit the end of its path
+				{
+					data->setBombPositionX(tmp, tmp2 + direction[1]); // if 0 then no so carry on moving bomb normally
+				}
+				else
+				{
+					data->setBombPositionX(tmp, tmp2 + tmpMoveEnd); //if 1 then add or take away one from the bomb so its outside the pushers range and stops getting pushed 
+				}
 			}
 		}
 
